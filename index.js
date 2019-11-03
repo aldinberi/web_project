@@ -11,6 +11,8 @@ app.use(bodyParser.json());
 
 app.use(express.static('public'));
 
+//products crud
+
 app.get('/products', (req, res) => {
     db.products.find({}, (error, docs) => {
         if(error){
@@ -19,6 +21,17 @@ app.get('/products', (req, res) => {
         res.json(docs);
     });
 });
+
+app.get('/products/:id', (req, res) => {
+    let id = req.params.id;
+    db.products.findOne({_id: mongojs.ObjectId(id)}, (error, docs) => {
+        if(error){
+            throw error;
+        }
+        res.json(docs);
+    });
+});
+
 
 app.get('/category/:name/products', (req, res) => {
     let category = req.params.name;
@@ -63,7 +76,7 @@ app.put('/products/:id', (req, res) => {
     }); 
 });
 
-app.delete('/productss/:id', (req, res) => {
+app.delete('/products/:id', (req, res) => {
     let id = req.params.id;
     db.products.remove({_id: mongojs.ObjectId(id)}, [true], (error, docs)=>{
         if(error){
@@ -92,6 +105,46 @@ app.get('/products/:id/cheapest', (req, res)=> {
 
     });
 });
+
+//stores crud
+app.get('/stores', (req, res) => {
+    db.stores.find({}, (error, docs) => {
+        if(error){
+            throw error;
+        }
+        res.json(docs);
+    });
+});
+
+app.get('/stores/:id', (req, res) => {
+    let id = req.params.id;
+    db.stores.findOne({_id: mongojs.ObjectId(id)}, (error, docs) => {
+        if(error){
+            throw error;
+        }
+        res.json(docs);
+    });
+});
+
+app.get('/stores/:city', (req, res) => {
+    let city = req.params.city;
+    db.stores.find({city: {$regex: city, $options:'i'}}).sort({name:1}, (error, docs) =>{
+        if(error){
+            throw error;
+        }
+        res.json(docs);
+    });    
+});
+
+app.post('/stores', (req, res) => {
+    db.stores.insert(req.body, (error, docs) =>{
+        if(error){
+            throw error;
+        }
+        res.json(docs);
+    });
+});
+
 
 app.listen(port, () => {
     console.log('Server listening on port :' + port);
