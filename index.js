@@ -95,8 +95,8 @@ app.get('/products/:id/cheapest', (req, res)=> {
         {$lookup: {from: 'stores', localField: 'store_id', foreignField: '_id', as:'store'}},
         {$lookup: {from: 'products', localField: 'product_id', foreignField:'_id', as: 'product'}},
         {$unwind:'$store'},
-        {$unwind: '$produt'},
-        {$project: {product_name: 'product.name', price: 1, store_name:'store.name', store_address:'$store.address'}}
+        {$unwind: '$product'},
+        {$project: {product_name: '$product.name', price: 1, store_name:'$store.name', store_address:'$store.address'}}
     ], (error, docs) => {
         if(error){
             throw error;
@@ -154,6 +154,8 @@ app.delete('/stores/:id', (req, res) => {
         res.json(docs);
     });
 });
+
+
 
 app.listen(port, () => {
     console.log('Server listening on port :' + port);
