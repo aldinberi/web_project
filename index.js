@@ -145,6 +145,15 @@ app.post('/stores', (req, res) => {
     });
 });
 
+app.delete('/stores/:id', (req, res) => {
+    let id = req.params.id;
+    db.products.remove({_id: mongojs.ObjectId(id)}, [true], (error, docs)=>{
+        if(error){
+            throw error;
+        }
+        res.json(docs);
+    });
+});
 
 app.listen(port, () => {
     console.log('Server listening on port :' + port);
