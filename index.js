@@ -25,9 +25,15 @@ let admin_router = express.Router();
 require('./routes/admin.js')(admin_router, db, mongojs, jwt, config);
 app.use('/admin', admin_router);
 
+let customer_router = express.Router();
+require('./routes/customer.js')(customer_router, db, mongojs, jwt, config);
+app.use('/customer', customer_router);
+
 let public_router = express.Router();
 require('./routes/public.js')(public_router, db, mongojs)
 app.use('/public', public_router);
+
+
 
 const {google} = require('googleapis');
 const oauth2Client = new google.auth.OAuth2(
