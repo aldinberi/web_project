@@ -2,6 +2,8 @@ const express = require('express');
 const mongojs = require('mongojs');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const swaggerrJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 let config;
 
@@ -12,6 +14,34 @@ const app = express();
 const port =  process.env.PORT || 3000;
 
 const db = mongojs(process.env.MONGODB_URL || config.MONGODB_URL);
+
+const swaggerDefinition = {
+    info:{
+        title: 'GranApp Swagger API Documentation',
+        version: '1.0.0'
+    },
+    host: process.env.SWAGGER_HOST || config.SWAGGER_HOST,
+    basePath:'/',
+    securityDefinitions: {
+        bearerAuth:{
+            type:'apiKey',
+            name:'Authorization',
+            scheme:'bearer',
+            in:'header'
+        }
+    }
+};
+
+const options = {
+swaggerDefinition,
+apis: [
+    './index.js',
+    './routes/*.js',
+    './models/*.js'
+]
+};
+
+const swaggerSpec = swaggerrJSDoc(options);
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -41,6 +71,13 @@ const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_SECRET || config.CLIENT_SECRET,
     process.env.REDIRECT_URL || config.REDIRECT_URL
 );
+
+app.get('/swagger.json', (req, res)=>{
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/login', (req, res) => {
     let code = req.query.code;
