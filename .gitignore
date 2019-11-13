@@ -1,4 +1,5 @@
 node_modules/
+.vscode/
 
 # API .gitignore
 api/node_modules/
