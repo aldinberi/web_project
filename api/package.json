@@ -1,15 +1,11 @@
 {
-  "name": "granapp",
+  "name": "web_project",
   "version": "1.0.0",
   "description": "This is just initial react project, on this I will build the website",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "frontend": "cd frontend && npm start",
-    "backend": "cd api && nodemon index.js",
-    "build-frontend": "cd frontend && npm run build",
-    "dev": "concurrently - kill-others \"npm run backend\" \"npm run frontend\"",
-    "start": "npm run build-frontend && npm run backend"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +18,12 @@
   },
   "homepage": "https://github.com/aldinberi/web_project#readme",
   "dependencies": {
-    "concurrently": "^5.0.0"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "googleapis": "^44.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongojs": "^3.1.0",
+    "swagger-jsdoc": "^3.4.0",
+    "swagger-ui-express": "^4.1.2"
   }
 }
