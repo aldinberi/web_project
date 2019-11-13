@@ -11,7 +11,7 @@ if(!process.env.HEROKU){
     config = require('./config');
 }
 const app = express();
-const port =  process.env.PORT || 3000;
+const port =  process.env.PORT || 3001;
 
 const db = mongojs(process.env.MONGODB_URL || config.MONGODB_URL);
 
@@ -43,7 +43,7 @@ apis: [
 
 const swaggerSpec = swaggerrJSDoc(options);
 
-app.use(express.static('public'));
+app.use('/', express.static('./../frontend/build'));
 app.use(bodyParser.json());
 
 app.use((req,res, next) => {
