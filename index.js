@@ -52,7 +52,7 @@ app.use((req,res, next) => {
 });
 
 let admin_router = express.Router();
-require('./routes/admin.js')(admin_router, db, mongojs, jwt, config);
+require('./routes/admin/admin.js')(admin_router, db, mongojs, jwt, config);
 app.use('/admin', admin_router);
 
 let customer_router = express.Router();

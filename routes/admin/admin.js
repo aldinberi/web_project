@@ -20,7 +20,7 @@ module.exports = (router, db, mongojs, jwt, config) =>{
         } else {
             res.status(401).send({ message: 'Unauthorized access.' });
         }
-    })
+    });
 
 
     router.post('/products', (req, res) => {
