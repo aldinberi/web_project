@@ -1,9 +1,4 @@
-module.exports = (router, db, mongojs) => {
-
-    router.use((req, res, next) => {
-        console.log(`New visit from ${req.ip} at ${new Date()}`);
-        next();
-    });
+module.exports = (router, db, mongojs) =>{
 
     router.get('/products', (req, res) => {
         db.products.find({}, (error, docs) => {
@@ -23,7 +18,6 @@ module.exports = (router, db, mongojs) => {
             res.json(docs);
         });
     });
-    
     
     router.get('/category/:name/products', (req, res) => {
         let category = req.params.name;
@@ -46,9 +40,6 @@ module.exports = (router, db, mongojs) => {
         });
     });
     
-    
-    
-    
     router.get('/products/:id/cheapest', (req, res)=> {
         let id = req.params.id;
         db.store_products.aggregate([
@@ -64,39 +55,7 @@ module.exports = (router, db, mongojs) => {
             if(error){
                 throw error;
             }
-            res.json(docs);
-    
+            res.json(docs);   
         });
     });
-    
-    //stores crud
-    router.get('/stores', (req, res) => {
-        db.stores.find({}, (error, docs) => {
-            if(error){
-                throw error;
-            }
-            res.json(docs);
-        });
-    });
-    
-    router.get('/stores/:id', (req, res) => {
-        let id = req.params.id;
-        db.stores.findOne({_id: mongojs.ObjectId(id)}, (error, docs) => {
-            if(error){
-                throw error;
-            }
-            res.json(docs);
-        });
-    });
-    
-    router.get('/stores/:city', (req, res) => {
-        let city = req.params.city;
-        db.stores.find({city: {$regex: city, $options:'i'}}).sort({name:1}, (error, docs) =>{
-            if(error){
-                throw error;
-            }
-            res.json(docs);
-        });    
-    });
-
 }

@@ -1,7 +1,11 @@
-module.exports = (router, db, mongojs, jwt, config) =>{
+module.exports = (router, db, mongojs, jwt, config, express, swaggerrJSDoc, swaggerUi) =>{
 
     router.use((req, res, next) => {
         console.log(`Admin route accessed by: ${req.ip}` ); 
+        console.log(req.path);
+        if(req.path.includes('api-docs')){ 
+            next();
+        }else{
 
         let authorization = req.get('Authorization');
         if (authorization) {
@@ -20,57 +24,21 @@ module.exports = (router, db, mongojs, jwt, config) =>{
         } else {
             res.status(401).send({ message: 'Unauthorized access.' });
         }
+    }
     });
 
+ 
 
-    router.post('/products', (req, res) => {
-        db.products.insert(req.body, (error, docs) =>{
-            if(error){
-                throw error;
-            }
-            res.json(docs);
-        });
-    });
+    let swagger_router = express.Router();
+    require('./swagger.js')(swagger_router, config, swaggerrJSDoc, swaggerUi);
+    router.use(swagger_router);
 
-    router.put('/products/:id', (req, res) => {
-        let id = req.params.id;
-        let itemUpdate = req.body;
-        db.products.findAndModify({
-            query : {_id:mongojs.ObjectId(id)}, update: {$set: itemUpdate}, new: true}, 
-            (error, docs) => {
-                if(error){
-                    throw error;
-                }
-                res.json(docs);
-        }); 
-    });
+    let product_router = express.Router();
+    require('./product.js')(product_router, db, mongojs);
+    router.use(product_router);
 
-    router.delete('/products/:id', (req, res) => {
-        let id = req.params.id;
-        db.products.remove({_id: mongojs.ObjectId(id)}, [true], (error, docs)=>{
-            if(error){
-                throw error;
-            }
-            res.json(docs);
-        });
-    });
+    let store_router = express.Router();
+    require('./store.js')(store_router, db, mongojs);
+    router.use(store_router);
 
-    router.post('/stores', (req, res) => {
-        db.stores.insert(req.body, (error, docs) =>{
-            if(error){
-                throw error;
-            }
-            res.json(docs);
-        });
-    });
-    
-    router.delete('/stores/:id', (req, res) => {
-        let id = req.params.id;
-        db.products.remove({_id: mongojs.ObjectId(id)}, [true], (error, docs)=>{
-            if(error){
-                throw error;
-            }
-            res.json(docs);
-        });
-    });
 }
