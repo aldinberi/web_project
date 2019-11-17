@@ -1,4 +1,4 @@
-module.exports = (router, config, swaggerrJSDoc, swaggerUi) =>{
+module.exports = (router, config, swaggerJSDoc, swaggerUi) =>{
     const swaggerDefinition = {
         info:{
             title: 'GranApp Swagger API Documentation',
@@ -19,13 +19,13 @@ module.exports = (router, config, swaggerrJSDoc, swaggerUi) =>{
     const options = {
         swaggerDefinition,
         apis: [
-            './index.js',
-            './routes/*.js',
-            './models/*.js'
+
+            './*.js',
+            './../public/*.js',
         ]
     };
 
-    const swaggerSpec = swaggerrJSDoc(options);
+    const swaggerSpec = swaggerJSDoc(options);
 
     router.get('/swagger.json', (req, res)=>{
         res.setHeader('Content-Type', 'application/json');

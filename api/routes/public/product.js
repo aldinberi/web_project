@@ -1,7 +1,9 @@
 module.exports = (router, db, mongojs) =>{
 
     router.get('/products', (req, res) => {
-        db.products.find({}, (error, docs) => {
+        let limit = Number(req.query.limit) || 5;
+        let skip = Number(req.query.skip) || 0;
+        db.products.find({}).skip(skip).limit(limit, (error, docs) =>{
             if(error){
                 throw error;
             }
@@ -27,17 +29,6 @@ module.exports = (router, db, mongojs) =>{
             }
             res.json(docs);
         });    
-    });
-    
-    router.get('/produts', (req, res) => {
-        let limit = Number(req.query.limit) || 5;
-        let skip = Number(req.query.skip) || 0;
-        db.products.find({}).skip(skip).limit(limit, (error, docs) =>{
-            if(error){
-                throw error;
-            }
-            res.json(docs);
-        });
     });
     
     router.get('/products/:id/cheapest', (req, res)=> {

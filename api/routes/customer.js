@@ -1,9 +1,8 @@
 
 module.exports = (router, db, mongojs, jwt, config) => {
     router.use((req, res, next) => {
-        console.log(`Customer route accessed by: ${req.ip}` ); // log visits
+        console.log(`Customer route accessed by: ${req.ip}` ); 
 
-        /* Check for proper JWT */
         let authorization = req.get('Authorization');
         if (authorization) {
             jwt.verify(authorization, process.env.JWT_SECRET || config.JWT_SECRET, (error, decoded) => {
