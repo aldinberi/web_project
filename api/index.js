@@ -19,41 +19,6 @@ const db = mongojs(process.env.MONGODB_URL || config.MONGODB_URL);
 app.use('/', express.static('./../frontend/build'));
 app.use(bodyParser.json());
 
-const swaggerDefinition = {
-    info: {
-        title: 'GranApp Swagger API Documentation',
-        version: '1.0.0',
-    },
-    host: process.env.SWAGGER_HOST || config.SWAGGER_HOST,
-    basePath: '/',
-    securityDefinitions: {
-        bearerAuth: {
-            type: 'apiKey',
-            name: 'Authorization',
-            scheme: 'bearer',
-            in: 'header',
-        },
-    },
-};
-
-const options = {
-    swaggerDefinition,
-    apis: [
-        './routes/admin/*.js',
-        './routes/public/*.js',
-        './models/*.js'
-    ],
-};
-
-const swaggerSpec = swaggerJSDoc(options);
-
-app.get('/swagger.json', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(swaggerSpec);
-});
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
 app.use((req,res, next) => {
     console.log('Server time: ', Date.now());
     next();

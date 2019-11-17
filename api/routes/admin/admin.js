@@ -1,31 +1,31 @@
 module.exports = (router, db, mongojs, jwt, config, express, swaggerJSDoc, swaggerUi) =>{
 
-    router.use((req, res, next) => {
-        console.log(`Admin route accessed by: ${req.ip}` ); 
-        console.log(req.path);
-        if(req.path.includes('api-docs')){ 
-            next();
-        }else{
+    // router.use((req, res, next) => {
+    //     console.log(`Admin route accessed by: ${req.ip}` ); 
+    //     console.log(req.path);
+    //     if(req.path.includes('api-docs')){ 
+    //         next();
+    //     }else{
 
-        let authorization = req.get('Authorization');
-        if (authorization) {
-            jwt.verify(authorization, process.env.JWT_SECRET || config.JWT_SECRET, (error, decoded) => {
-                if (error) {
-                    res.status(401).send({ message: 'Unauthorized access: ' + error.message });
-                } else {
-                    let userType = decoded.type;
-                    if (userType === 'admin') {
-                        next();
-                    } else {
-                        res.status(401).send({ message: 'Unauthorized access: improper privileges'});
-                    }
-                }
-            });
-        } else {
-            res.status(401).send({ message: 'Unauthorized access.' });
-        }
-    }
-    });
+    //     let authorization = req.get('Authorization');
+    //     if (authorization) {
+    //         jwt.verify(authorization, process.env.JWT_SECRET || config.JWT_SECRET, (error, decoded) => {
+    //             if (error) {
+    //                 res.status(401).send({ message: 'Unauthorized access: ' + error.message });
+    //             } else {
+    //                 let userType = decoded.type;
+    //                 if (userType === 'admin') {
+    //                     next();
+    //                 } else {
+    //                     res.status(401).send({ message: 'Unauthorized access: improper privileges'});
+    //                 }
+    //             }
+    //         });
+    //     } else {
+    //         res.status(401).send({ message: 'Unauthorized access.' });
+    //     }
+    // }
+    // });
 
     let product_router = express.Router();
     require('./product.js')(product_router, db, mongojs);
