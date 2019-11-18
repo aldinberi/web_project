@@ -35,7 +35,7 @@ module.exports = (router, db, mongojs) =>{
         let skip = Number(req.query.skip) || 0;
         db.stores.find({}).skip(skip).limit(limit, (error, docs) =>{
             if(error){
-                throw error;
+                res.status(400).json({ message: `Retrieving data failed. Reason: ${err.errmsg}` });
             }
             res.json(docs);
         });
@@ -59,7 +59,7 @@ module.exports = (router, db, mongojs) =>{
     *         description: ID of the store
     *         required: true
     *         type: string
-    *         default: '5db704ef3864c7524cd291ff'
+    *         default: '5da4c3fbeaea926c41e5e62a'
     *     responses:
     *       200:
     *         description: List a single store from the system
@@ -75,17 +75,47 @@ module.exports = (router, db, mongojs) =>{
         let id = req.params.id;
         db.stores.findOne({_id: mongojs.ObjectId(id)}, (error, docs) => {
             if(error){
-                throw error;
+                res.status(400).json({ message: `Retrieving data failed. Reason: ${err.errmsg}` });
             }
             res.json(docs);
         });
     });
+
+        /**
+    * @swagger
+    * /stores/city/{city}:
+    *   get:
+    *     tags:
+    *       - stores
+    *     name: getStoreByCity
+    *     summary: Get a store from the system by its city
+    *     security:
+    *       - bearerAuth: []
+    *     produces:
+    *       - application/json
+    *     parameters:
+    *       - name: city
+    *         in: path
+    *         description: City of the store
+    *         required: true
+    *         type: string
+    *         default: 'sarajevo'
+    *     responses:
+    *       200:
+    *         description: List a single store from the system based on the city
+    *       400:
+    *           description: Invalid user request.
+    *       401:
+    *           description: Unauthorized access.
+    *       500:
+    *         description: Something is wrong with the service. Please contact the system administrator.
+    */
     
-    router.get('/stores/:city', (req, res) => {
+    router.get('/stores/city/:city', (req, res) => {
         let city = req.params.city;
         db.stores.find({city: {$regex: city, $options:'i'}}).sort({name:1}, (error, docs) =>{
             if(error){
-                throw error;
+                res.status(400).json({ message: `Retrieving data failed. Reason: ${err.errmsg}` });
             }
             res.json(docs);
         });    

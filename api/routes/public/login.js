@@ -5,6 +5,23 @@ module.exports = (router, db, mongojs, config, google) =>{
         process.env.CLIENT_SECRET || config.CLIENT_SECRET,
         process.env.REDIRECT_URL || config.REDIRECT_URL
     );
+
+    /**
+  * @swagger
+  * /login:
+  *   get:
+  *     tags:
+  *       - login
+  *     name: login
+  *     summary: Use Google Open ID to login to the system. If the account does not exist, it will be created based on login info retrieved from Google.
+  *     produces:
+  *       - application/json
+  *     responses:
+  *       200:
+  *         description: Successful login
+  *       500:
+  *         description: Something is wrong with the service. Please contact the system administrator.
+  */
     
     router.get('/login', (req, res) => {
         let code = req.query.code;
@@ -18,7 +35,7 @@ module.exports = (router, db, mongojs, config, google) =>{
               
               oauth2.userinfo.get((err, response) => {
                   if (err) {
-                      throw err;
+                    res.status(400).json({ message: `Update failed. Reason: ${err.errmsg}` });
                   }
                   let data = response.data;
     
