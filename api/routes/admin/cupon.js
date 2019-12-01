@@ -1,12 +1,12 @@
 module.exports = (router, db, mongojs) => {
 	/**
 	 * @swagger
-	 * /admin/products:
+	 * /admin/cupons:
 	 *   post:
 	 *     tags:
-	 *       - products
-	 *     name: addProducts
-	 *     summary: Add a new store to the system
+	 *       - cupons
+	 *     name: addCupons
+	 *     summary: Add a new cupon to the system
 	 *     security:
 	 *       - bearerAuth: []
 	 *     consumes:
@@ -14,24 +14,23 @@ module.exports = (router, db, mongojs) => {
 	 *     parameters:
 	 *       - in: body
 	 *         name: body
-	 *         description: Product object
+	 *         description: Cupon object
 	 *         required: true
 	 *         schema:
-	 *             $ref: "#/definitions/Product"
+	 *             $ref: "#/definitions/Cupon"
 	 *     responses:
 	 *       200:
-	 *         description: Return a new product.
+	 *         description: Return a new cupon.
 	 *       400:
 	 *           description: Invalid user request.
 	 *       500:
 	 *         description: Something is wrong with the service. Please contact the system administrator.
 	 */
 
-	router.post("/products", (req, res) => {
-		req.body.date_added = mongojs.Timestamp(req.body.date_added);
-		db.products.insert(req.body, (error, docs) => {
+	router.post("/cupons", (req, res) => {
+		db.cupons.insert(req.body, (error, docs) => {
 			if (error) {
-				res.status(400).json({ message: `Insert failed. Reason: ${error.errmsg}` });
+				res.status(400).json({ message: `Insert failed. Reason: ${err.errmsg}` });
 			}
 			res.json(docs);
 		});
@@ -39,12 +38,12 @@ module.exports = (router, db, mongojs) => {
 
 	/**
 	 * @swagger
-	 * /admin/products/{id}:
+	 * /admin/cupons/{id}:
 	 *   put:
 	 *     tags:
-	 *       - products
-	 *     name: updateProducts
-	 *     summary: Update product details.
+	 *       - cupons
+	 *     name: updateCupons
+	 *     summary: Update cupon details.
 	 *     security:
 	 *       - bearerAuth: []
 	 *     consumes:
@@ -54,28 +53,27 @@ module.exports = (router, db, mongojs) => {
 	 *     parameters:
 	 *       - in: path
 	 *         name: id
-	 *         description: ID of the product
+	 *         description: ID of the cupon
 	 *         required: true
 	 *         type: string
-	 *         default: '5db704ef3864c7524cd291ff'
+	 *         default: '5de3d9059c11b8c773e5809c'
 	 *       - in: body
 	 *         name: body
-	 *         description: Product object
+	 *         description: Cupon object
 	 *         required: true
 	 *         schema:
-	 *             $ref: "#/definitions/Product"
+	 *             $ref: "#/definitions/Cupon"
 	 *     responses:
 	 *       200:
-	 *         description: Return the updated product.
+	 *         description: Return the updated cupon.
 	 *       500:
 	 *         description: Something is wrong with the service. Please contact the system administrator.
 	 */
 
-	router.put("/products/:id", (req, res) => {
-		req.body.date_added = mongojs.Timestamp(req.body.date_added);
+	router.put("/cupons/:id", (req, res) => {
 		let id = req.params.id;
 		let itemUpdate = req.body;
-		db.products.findAndModify(
+		db.cupons.findAndModify(
 			{
 				query: { _id: mongojs.ObjectId(id) },
 				update: { $set: itemUpdate },
@@ -83,7 +81,7 @@ module.exports = (router, db, mongojs) => {
 			},
 			(error, docs) => {
 				if (error) {
-					res.status(400).json({ message: `Update failed. Reason: ${error.errmsg}` });
+					res.status(400).json({ message: `Update failed. Reason: ${err.errmsg}` });
 				}
 				res.json(docs);
 			}
@@ -92,12 +90,12 @@ module.exports = (router, db, mongojs) => {
 
 	/**
 	 * @swagger
-	 * /admin/products/{id}:
+	 * /admin/cupons/{id}:
 	 *   delete:
 	 *     tags:
-	 *       - products
-	 *     name: deleteProductById
-	 *     summary: Delete a product from the system by its ID
+	 *       - cupons
+	 *     name: deleteCuponById
+	 *     summary: Delete a cupon from the system by its ID
 	 *     security:
 	 *       - bearerAuth: []
 	 *     produces:
@@ -105,13 +103,13 @@ module.exports = (router, db, mongojs) => {
 	 *     parameters:
 	 *       - name: id
 	 *         in: path
-	 *         description: ID of the product
+	 *         description: ID of the cupon
 	 *         required: true
 	 *         type: string
-	 *         default: '5db704ef3864c7524cd291ff'
+	 *         default: '5de3d9059c11b8c773e5809c'
 	 *     responses:
 	 *       200:
-	 *         description: Successfully deletes a single product from the system
+	 *         description: Successfully deletes a single cupon from the system
 	 *       400:
 	 *           description: Invalid user request.
 	 *       401:
@@ -120,11 +118,11 @@ module.exports = (router, db, mongojs) => {
 	 *         description: Something is wrong with the service. Please contact the system administrator.
 	 */
 
-	router.delete("/products/:id", (req, res) => {
+	router.delete("/cupons/:id", (req, res) => {
 		let id = req.params.id;
-		db.products.remove({ _id: mongojs.ObjectId(id) }, [true], (error, docs) => {
+		db.cupons.remove({ _id: mongojs.ObjectId(id) }, [true], (error, docs) => {
 			if (error) {
-				res.status(400).json({ message: `Delete failed. Reason: ${error.errmsg}` });
+				res.status(400).json({ message: `Delete failed. Reason: ${err.errmsg}` });
 			}
 			res.json(docs);
 		});
