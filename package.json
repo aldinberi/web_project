@@ -1,27 +1,27 @@
 {
-  "name": "granapp",
-  "version": "1.0.0",
-  "description": "This is just initial react project, on this I will build the website",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "frontend": "cd frontend && npm start",
-    "backend": "cd api && nodemon index.js",
-    "dev": "concurrently - kill-others \"npm run backend\" \"npm run frontend\"",
-    "start": "cd api && npm install && node index.js",
-    "heroku-postbuild": "cd frontend && npm install && npm run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/aldinberi/web_project.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/aldinberi/web_project/issues"
-  },
-  "homepage": "https://github.com/aldinberi/web_project#readme",
-  "dependencies": {
-    "concurrently": "^5.0.0"
-  }
+	"name": "granapp",
+	"version": "1.0.0",
+	"description": "This is just initial react project, on this I will build the website",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"frontend": "cd frontend && npm start",
+		"backend": "cd api && nodemon index.js",
+		"dev": "concurrently --kill-others \"npm run backend\" \"npm run frontend\"",
+		"install": "cd api && npm install && cd ../frontend && npm install",
+		"start": "cd frontend && npm run build && cd ../api && node index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/aldinberi/web_project.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/aldinberi/web_project/issues"
+	},
+	"homepage": "https://github.com/aldinberi/web_project#readme",
+	"devDependencies": {
+		"concurrently": "^5.0.0"
+	}
 }

@@ -28,6 +28,8 @@ module.exports = (router, db, mongojs) => {
 	 */
 
 	router.post("/cupons", (req, res) => {
+		req.body.product_id = mongojs.ObjectId(req.body.product_id);
+		req.body.store_id = mongojs.ObjectId(req.body.store_id);
 		db.cupons.insert(req.body, (error, docs) => {
 			if (error) {
 				res.status(400).json({ message: `Insert failed. Reason: ${err.errmsg}` });
@@ -72,6 +74,8 @@ module.exports = (router, db, mongojs) => {
 
 	router.put("/cupons/:id", (req, res) => {
 		let id = req.params.id;
+		req.body.product_id = mongojs.ObjectId(req.body.product_id);
+		req.body.store_id = mongojs.ObjectId(req.body.store_id);
 		let itemUpdate = req.body;
 		db.cupons.findAndModify(
 			{
