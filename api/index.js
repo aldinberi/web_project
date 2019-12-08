@@ -29,7 +29,7 @@ require("./routes/admin/admin.js")(admin_router, db, mongojs, jwt, config, expre
 app.use("/admin", admin_router);
 
 let customer_router = express.Router();
-require("./routes/customer.js")(customer_router, db, mongojs, jwt, config);
+require("./routes/customer/customer.js")(customer_router, db, mongojs, jwt, config, express);
 app.use("/customer", customer_router);
 
 let public_router = express.Router();

@@ -57,7 +57,7 @@ module.exports = (router, db, mongojs) => {
 	 *         description: ID of the product
 	 *         required: true
 	 *         type: string
-	 *         default: '5db704ef3864c7524cd291ff'
+	 *         default: '5de4262df71e2c88b4835871'
 	 *       - in: body
 	 *         name: body
 	 *         description: Product object
