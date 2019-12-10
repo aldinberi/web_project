@@ -30,7 +30,7 @@ module.exports = (router, db, mongojs) => {
 	 *       - application/json
 	 *     responses:
 	 *       200:
-	 *         description: List of products in cart
+	 *         description: Returend list of products in cart
 	 *       400:
 	 *           description: Invalid user request.
 	 *       401:
@@ -72,7 +72,7 @@ module.exports = (router, db, mongojs) => {
 			],
 			(error, docs) => {
 				if (error) {
-					res.status(400).json({ message: `Retrieving data failed. Reason: ${err.errmsg}` });
+					res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
 				}
 				res.json(docs);
 			}
@@ -100,7 +100,7 @@ module.exports = (router, db, mongojs) => {
 	 *       - application/json
 	 *     responses:
 	 *       200:
-	 *         description: Total price of users cart
+	 *         description: Returned the total price of users cart
 	 *       400:
 	 *           description: Invalid user request.
 	 *       401:
@@ -129,7 +129,7 @@ module.exports = (router, db, mongojs) => {
 			],
 			(error, docs) => {
 				if (error) {
-					res.status(400).json({ message: `Retrieving data failed. Reason: ${err.errmsg}` });
+					res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
 				}
 				res.json(docs);
 			}
@@ -157,7 +157,7 @@ module.exports = (router, db, mongojs) => {
 	 *             $ref: "#/definitions/Cart"
 	 *     responses:
 	 *       200:
-	 *         description: Return a new entry.
+	 *         description: Returned a new entry in the cart.
 	 *       400:
 	 *           description: Invalid user request.
 	 *       401:
@@ -171,7 +171,7 @@ module.exports = (router, db, mongojs) => {
 		req.body.store_products_id = mongojs.ObjectId(req.body.store_products_id);
 		db.shopping_carts.insert(req.body, (error, docs) => {
 			if (error) {
-				res.status(400).json({ message: `Insert failed. Reason: ${err.errmsg}` });
+				res.status(400).json({ message: `Insert failed. Reason: ${error.errmsg}` });
 			}
 			res.json(docs);
 		});
@@ -206,7 +206,7 @@ module.exports = (router, db, mongojs) => {
 	 *             $ref: "#/definitions/Cart"
 	 *     responses:
 	 *       200:
-	 *         description: Return the updated shopping cart object.
+	 *         description: Returned the updated shopping cart object.
 	 *       400:
 	 *         description: Invalid user request.
 	 *       401:
@@ -228,7 +228,7 @@ module.exports = (router, db, mongojs) => {
 			},
 			(error, docs) => {
 				if (error) {
-					res.status(400).json({ message: `Update failed. Reason: ${err.errmsg}` });
+					res.status(400).json({ message: `Update failed. Reason: ${error.errmsg}` });
 				}
 				res.json(docs);
 			}
@@ -269,7 +269,7 @@ module.exports = (router, db, mongojs) => {
 		let id = req.params.id;
 		db.shopping_carts.remove({ _id: mongojs.ObjectId(id) }, [true], (error, docs) => {
 			if (error) {
-				res.status(400).json({ message: `Delete failed. Reason: ${err.errmsg}` });
+				res.status(400).json({ message: `Delete failed. Reason: ${error.errmsg}` });
 			}
 			res.json(docs);
 		});

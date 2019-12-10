@@ -18,8 +18,10 @@ module.exports = (router, db, mongojs, config, google, jwt) => {
 	 *     responses:
 	 *       200:
 	 *         description: Successful login
+	 *       400:
+	 *           description: Invalid user request.
 	 *       500:
-	 *         description: Something is wrong with the service. Please contact the system administrator.
+	 *         description: Something is wrong with service please contact system administrator
 	 */
 
 	router.get("/login", (req, res) => {

@@ -20,11 +20,13 @@ module.exports = (router, db, mongojs) => {
 	 *             $ref: "#/definitions/Cupon"
 	 *     responses:
 	 *       200:
-	 *         description: Return a new cupon.
+	 *         description: Returned a new cupon.
 	 *       400:
 	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
 	 *       500:
-	 *         description: Something is wrong with the service. Please contact the system administrator.
+	 *         description: Something is wrong with service please contact system administrator
 	 */
 
 	router.post("/cupons", (req, res) => {
@@ -32,7 +34,7 @@ module.exports = (router, db, mongojs) => {
 		req.body.store_id = mongojs.ObjectId(req.body.store_id);
 		db.cupons.insert(req.body, (error, docs) => {
 			if (error) {
-				res.status(400).json({ message: `Insert failed. Reason: ${err.errmsg}` });
+				res.status(400).json({ message: `Insert failed. Reason: ${error.errmsg}` });
 			}
 			res.json(docs);
 		});
@@ -67,9 +69,13 @@ module.exports = (router, db, mongojs) => {
 	 *             $ref: "#/definitions/Cupon"
 	 *     responses:
 	 *       200:
-	 *         description: Return the updated cupon.
+	 *         description: Returned updated cupon
+	 *       400:
+	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
 	 *       500:
-	 *         description: Something is wrong with the service. Please contact the system administrator.
+	 *         description: Something is wrong with service please contact system administrator
 	 */
 
 	router.put("/cupons/:id", (req, res) => {
@@ -85,7 +91,7 @@ module.exports = (router, db, mongojs) => {
 			},
 			(error, docs) => {
 				if (error) {
-					res.status(400).json({ message: `Update failed. Reason: ${err.errmsg}` });
+					res.status(400).json({ message: `Update failed. Reason: ${error.errmsg}` });
 				}
 				res.json(docs);
 			}
@@ -113,7 +119,7 @@ module.exports = (router, db, mongojs) => {
 	 *         default: '5de3d9059c11b8c773e5809c'
 	 *     responses:
 	 *       200:
-	 *         description: Successfully deletes a single cupon from the system
+	 *         description: Successfully deleted a single cupon from the system
 	 *       400:
 	 *           description: Invalid user request.
 	 *       401:
@@ -126,7 +132,7 @@ module.exports = (router, db, mongojs) => {
 		let id = req.params.id;
 		db.cupons.remove({ _id: mongojs.ObjectId(id) }, [true], (error, docs) => {
 			if (error) {
-				res.status(400).json({ message: `Delete failed. Reason: ${err.errmsg}` });
+				res.status(400).json({ message: `Delete failed. Reason: ${error.errmsg}` });
 			}
 			res.json(docs);
 		});

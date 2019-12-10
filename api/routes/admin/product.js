@@ -20,11 +20,13 @@ module.exports = (router, db, mongojs) => {
 	 *             $ref: "#/definitions/Product"
 	 *     responses:
 	 *       200:
-	 *         description: Return a new product.
+	 *         description: Resturned new product
 	 *       400:
 	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
 	 *       500:
-	 *         description: Something is wrong with the service. Please contact the system administrator.
+	 *         description: Something is wrong with service please contact system administrator
 	 */
 
 	router.post("/products", (req, res) => {
@@ -66,9 +68,13 @@ module.exports = (router, db, mongojs) => {
 	 *             $ref: "#/definitions/Product"
 	 *     responses:
 	 *       200:
-	 *         description: Return the updated product.
+	 *         description: Returned updated product
+	 *       400:
+	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
 	 *       500:
-	 *         description: Something is wrong with the service. Please contact the system administrator.
+	 *         description: Something is wrong with service please contact system administrator
 	 */
 
 	router.put("/products/:id", (req, res) => {

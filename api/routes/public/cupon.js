@@ -18,13 +18,15 @@ module.exports = (router, db, mongojs) => {
 	 *         description: The limit of the cupon list.
 	 *         type: integer
 	 *         default: 5
-	 *     security:
-	 *       - bearerAuth: []
 	 *     produces:
 	 *       - application/json
 	 *     responses:
 	 *       200:
-	 *         description: List of all cupons in system
+	 *         description: Returned a list of cupons
+	 *       400:
+	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
 	 *       500:
 	 *         description: Something is wrong with service please contact system administrator
 	 */
@@ -53,7 +55,7 @@ module.exports = (router, db, mongojs) => {
 			],
 			(error, docs) => {
 				if (error) {
-					res.status(400).json({ message: `Retrieving data failed. Reason: ${err.errmsg}` });
+					res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
 				}
 				res.json(docs);
 			}
@@ -68,8 +70,6 @@ module.exports = (router, db, mongojs) => {
 	 *       - cupons
 	 *     name: getCuponById
 	 *     summary: Get a cupon from the system by its ID
-	 *     security:
-	 *       - bearerAuth: []
 	 *     produces:
 	 *       - application/json
 	 *     parameters:
@@ -81,7 +81,7 @@ module.exports = (router, db, mongojs) => {
 	 *         default: '5de3d9059c11b8c773e5809c'
 	 *     responses:
 	 *       200:
-	 *         description: List a single cupon from the system
+	 *         description: Returned a single cupon from the system
 	 *       400:
 	 *           description: Invalid user request.
 	 *       401:
@@ -94,7 +94,7 @@ module.exports = (router, db, mongojs) => {
 		let id = req.params.id;
 		db.cupons.findOne({ _id: mongojs.ObjectId(id) }, (error, docs) => {
 			if (error) {
-				res.status(400).json({ message: `Retrieving data failed. Reason: ${err.errmsg}` });
+				res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
 			}
 			res.json(docs);
 		});
@@ -108,8 +108,6 @@ module.exports = (router, db, mongojs) => {
 	 *       - cupons
 	 *     name: getCuponByProduct
 	 *     summary: Get cheapest product price from the system by its ID
-	 *     security:
-	 *       - bearerAuth: []
 	 *     produces:
 	 *       - application/json
 	 *     parameters:
@@ -121,7 +119,7 @@ module.exports = (router, db, mongojs) => {
 	 *         default: '5da4bd64eaea926c41e5e629'
 	 *     responses:
 	 *       200:
-	 *         description: List a list of cheapest price for product from the system
+	 *         description: Returned a list of cheapest price for product from the system
 	 *       400:
 	 *           description: Invalid user request.
 	 *       401:
@@ -153,7 +151,7 @@ module.exports = (router, db, mongojs) => {
 			],
 			(error, docs) => {
 				if (error) {
-					res.status(400).json({ message: `Retrieving data failed. Reason: ${err.errmsg}` });
+					res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
 				}
 				res.json(docs);
 			}
