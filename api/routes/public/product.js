@@ -61,7 +61,7 @@ module.exports = (router, db, mongojs) => {
 	 *         description: ID of the product
 	 *         required: true
 	 *         type: string
-	 *         default: '5da4bd64eaea926c41e5e629'
+	 *         default: '5de4262df71e2c88b4835871'
 	 *     responses:
 	 *       200:
 	 *         description: Returned a single product from the system
@@ -137,7 +137,7 @@ module.exports = (router, db, mongojs) => {
 	 *         description: ID of the product
 	 *         required: true
 	 *         type: string
-	 *         default: '5da4bd64eaea926c41e5e629'
+	 *         default: '5de4262df71e2c88b4835871'
 	 *     responses:
 	 *       200:
 	 *         description: Returned a list of cheapest price for product from the system

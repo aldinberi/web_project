@@ -40,23 +40,35 @@ module.exports = (router, db, mongojs) => {
 
 	/**
 	 * @swagger
-	 * /admin/stores:
+	 * /admin/stores/{store_id}/product/{product_id}:
 	 *   post:
 	 *     tags:
 	 *       - stores
-	 *     name: addStores
+	 *     name: addStoreProduct
 	 *     summary: Add a new store to the system
 	 *     security:
 	 *       - bearerAuth: []
 	 *     consumes:
 	 *       - application/json
 	 *     parameters:
+	 *       - in: path
+	 *         name: store_id
+	 *         description: ID of the store
+	 *         required: true
+	 *         type: string
+	 *         default: '5de4262df71e2c88b4835871'
+	 *       - in: path
+	 *         name: product_id
+	 *         description: ID of the product
+	 *         required: true
+	 *         type: string
+	 *         default: '5def7ea44108275e78558d65'
 	 *       - in: body
 	 *         name: body
 	 *         description: Store object
 	 *         required: true
 	 *         schema:
-	 *             $ref: "#/definitions/Store"
+	 *             $ref: "#/definitions/StoreProduct"
 	 *     responses:
 	 *       200:
 	 *         description: Returned a new store.
@@ -68,13 +80,20 @@ module.exports = (router, db, mongojs) => {
 	 *         description: Something is wrong with the service. Please contact the system administrator.
 	 */
 
-	router.post("/stores/store", (req, res) => {
-		db.stores.insert(req.body, (error, docs) => {
-			if (error) {
-				res.status(400).json({ message: `Insert failed. Reason: ${error.errmsg}` });
+	router.post("/stores/:store_id/product/:product_id", (req, res) => {
+		db.store_products.insert(
+			{
+				store_id: mongojs.ObjectId(req.params.store_id),
+				product_id: mongojs.ObjectId(req.params.product_id),
+				price: req.body.price
+			},
+			(error, docs) => {
+				if (error) {
+					res.status(400).json({ message: `Insert failed. Reason: ${error.errmsg}` });
+				}
+				res.json(docs);
 			}
-			res.json(docs);
-		});
+		);
 	});
 
 	/**
@@ -97,7 +116,7 @@ module.exports = (router, db, mongojs) => {
 	 *         description: ID of the store
 	 *         required: true
 	 *         type: string
-	 *         default: '5db704ef3864c7524cd291ff'
+	 *         default: '5def7ea44108275e78558d65'
 	 *       - in: body
 	 *         name: body
 	 *         description: Store object
@@ -152,7 +171,7 @@ module.exports = (router, db, mongojs) => {
 	 *         description: ID of the store
 	 *         required: true
 	 *         type: string
-	 *         default: '5db704ef3864c7524cd291ff'
+	 *         default: '5def7ea44108275e78558d65'
 	 *     responses:
 	 *       200:
 	 *         description: Successfully deletes a single store from the system

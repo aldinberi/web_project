@@ -61,7 +61,7 @@ module.exports = (router, db, mongojs) => {
 	 *         description: ID of the store
 	 *         required: true
 	 *         type: string
-	 *         default: '5da4c3fbeaea926c41e5e62a'
+	 *         default: '5def7ea44108275e78558d65'
 	 *     responses:
 	 *       200:
 	 *         description: Returned a single store from the system
