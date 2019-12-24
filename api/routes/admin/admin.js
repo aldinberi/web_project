@@ -38,6 +38,10 @@ module.exports = (router, db, mongojs, jwt, config, express, swaggerJSDoc, swagg
 	require("./store.js")(store_router, db, mongojs);
 	router.use(store_router);
 
+	let user_router = express.Router();
+	require("./user.js")(user_router, db, mongojs);
+	router.use(user_router);
+
 	let swagger_router = express.Router();
 	require("./swagger.js")(swagger_router, config, swaggerJSDoc, swaggerUi);
 	router.use(swagger_router);

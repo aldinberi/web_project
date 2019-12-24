@@ -56,7 +56,7 @@ module.exports = (router, db, mongojs, config, google, jwt) => {
 							let jwtToken = jwt.sign(
 								{
 									...data,
-									exp: Math.floor(Date.now() / 1000) + 3600,
+									//exp: Math.floor(Date.now() / 1000) + 3600,
 									id: doc._id,
 									type: doc.type
 								},

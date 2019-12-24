@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const { google } = require("googleapis");
+const cors = require("cors");
 
 let config;
 
@@ -18,6 +19,8 @@ const db = mongojs(process.env.MONGODB_URL || config.MONGODB_URL);
 
 app.use("/", express.static("./../frontend/build"));
 app.use(bodyParser.json());
+
+app.use(cors());
 
 app.use((req, res, next) => {
 	console.log("Server time: ", Date.now());

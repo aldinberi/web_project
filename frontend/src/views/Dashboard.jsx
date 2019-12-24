@@ -18,6 +18,7 @@
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
+import Axios from 'axios';
 
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
@@ -36,6 +37,11 @@ import {
 } from "variables/Variables.jsx";
 
 class Dashboard extends Component {
+  state = {
+    users: null,
+    products: null,
+    stores: null
+  }
   createLegend(json) {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
@@ -46,6 +52,19 @@ class Dashboard extends Component {
     }
     return legend;
   }
+
+  componentDidMount() {
+    Axios.get('http://localhost:3001/admin//users/count', { headers: { Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkYzcwMjhkNzE5YTUyZjdhZDM4MWExYSIsImVtYWlsIjoiYWxkaW5iZXJpc2ExNTE0QGdtYWlsLmNvbSIsInZlcmlmaWVkX2VtYWlsIjp0cnVlLCJuYW1lIjoiQWxkaW4gQmVyaWkiLCJnaXZlbl9uYW1lIjoiQWxkaW4iLCJmYW1pbHlfbmFtZSI6IkJlcmlpIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BQXVFN21BRXBqdzlpY1VmUkVpaE5kWDA2bW9rX1Y5LWRKdEhwWldSVlg3MSIsImxvY2FsZSI6ImVuIiwidHlwZSI6ImFkbWluIiwiaWF0IjoxNTc3MjI5OTQ4fQ.OMu8eacoW50hW0yA23Vd3UzkUBdDi825BS82nxh7zoo' } }
+    ).then(response => {
+      this.setState({
+        users: response.data[0].count
+      })
+    }).catch(error => {
+      console.log(error.response);
+    }).finally(() => {
+      console.log(`${this.state.users} number retrived`);
+    });
+  }
   render() {
     return (
       <div className="content">
@@ -53,9 +72,9 @@ class Dashboard extends Component {
           <Row>
             <Col lg={3} sm={6}>
               <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
-                statsText="Capacity"
-                statsValue="105GB"
+                bigIcon={<i className="pe-7s-users text-success" />}
+                statsText="Users"
+                statsValue={this.state.users}
                 statsIcon={<i className="fa fa-refresh" />}
                 statsIconText="Updated now"
               />
