@@ -40,7 +40,8 @@ class Dashboard extends Component {
   state = {
     users: null,
     products: null,
-    stores: null
+    stores: null,
+    orders: null
   }
   createLegend(json) {
     var legend = [];
@@ -54,7 +55,7 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    Axios.get('http://localhost:3001/admin//users/count', { headers: { Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkYzcwMjhkNzE5YTUyZjdhZDM4MWExYSIsImVtYWlsIjoiYWxkaW5iZXJpc2ExNTE0QGdtYWlsLmNvbSIsInZlcmlmaWVkX2VtYWlsIjp0cnVlLCJuYW1lIjoiQWxkaW4gQmVyaWkiLCJnaXZlbl9uYW1lIjoiQWxkaW4iLCJmYW1pbHlfbmFtZSI6IkJlcmlpIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BQXVFN21BRXBqdzlpY1VmUkVpaE5kWDA2bW9rX1Y5LWRKdEhwWldSVlg3MSIsImxvY2FsZSI6ImVuIiwidHlwZSI6ImFkbWluIiwiaWF0IjoxNTc3MjI5OTQ4fQ.OMu8eacoW50hW0yA23Vd3UzkUBdDi825BS82nxh7zoo' } }
+    Axios.get('http://localhost:3001/admin/users/count'
     ).then(response => {
       this.setState({
         users: response.data[0].count
@@ -64,6 +65,40 @@ class Dashboard extends Component {
     }).finally(() => {
       console.log(`${this.state.users} number retrived`);
     });
+
+    Axios.get('http://localhost:3001/admin/products/count'
+    ).then(response => {
+      this.setState({
+        products: response.data[0].count
+      })
+    }).catch(error => {
+      console.log(error.response);
+    }).finally(() => {
+      console.log(`${this.state.products} number retrived`);
+    });
+
+    Axios.get('http://localhost:3001/admin/stores/count'
+    ).then(response => {
+      this.setState({
+        stores: response.data[0].count
+      })
+    }).catch(error => {
+      console.log(error.response);
+    }).finally(() => {
+      console.log(`${this.state.products} number retrived`);
+    });
+
+    Axios.get('http://localhost:3001/admin/products/count/completed'
+    ).then(response => {
+      this.setState({
+        orders: response.data[0].count
+      })
+    }).catch(error => {
+      console.log(error.response);
+    }).finally(() => {
+      console.log(`${this.state.orders} number retrived`);
+    });
+
   }
   render() {
     return (
@@ -81,27 +116,27 @@ class Dashboard extends Component {
             </Col>
             <Col lg={3} sm={6}>
               <StatsCard
-                bigIcon={<i className="pe-7s-wallet text-success" />}
-                statsText="Revenue"
-                statsValue="$1,345"
-                statsIcon={<i className="fa fa-calendar-o" />}
-                statsIconText="Last day"
+                bigIcon={<i className="pe-7s-drawer text-warning" />}
+                statsText="Total Products"
+                statsValue={this.state.products}
+                statsIcon={<i className="fa fa-refresh" />}
+                statsIconText="Updated now"
               />
             </Col>
             <Col lg={3} sm={6}>
               <StatsCard
-                bigIcon={<i className="pe-7s-graph1 text-danger" />}
-                statsText="Errors"
-                statsValue="23"
-                statsIcon={<i className="fa fa-clock-o" />}
-                statsIconText="In the last hour"
+                bigIcon={<i className="pe-7s-shopbag text-danger" />}
+                statsText="Total stores"
+                statsValue={this.state.stores}
+                statsIcon={<i className="fa fa-refresh" />}
+                statsIconText="Updated now"
               />
             </Col>
             <Col lg={3} sm={6}>
               <StatsCard
-                bigIcon={<i className="fa fa-twitter text-info" />}
-                statsText="Followers"
-                statsValue="+45"
+                bigIcon={<i className="pe-7s-cart text-info" />}
+                statsText="Total orders"
+                statsValue={this.state.orders}
                 statsIcon={<i className="fa fa-refresh" />}
                 statsIconText="Updated now"
               />

@@ -1,4 +1,41 @@
 module.exports = (router, db, mongojs) => {
+
+	/**
+	 * @swagger
+	 * /admin/stores/count:
+	 *   get:
+	 *     tags:
+	 *       - stores
+	 *     name: getStoreCount
+	 *     summary: Get count of stores in system
+	 *     security:
+	 *       - bearerAuth: []
+	 *     produces:
+	 *       - application/json
+	 *     responses:
+	 *       200:
+	 *           description: Returned count of stores in system
+	 *       400:
+	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
+	 *       500:
+	 *           description: Something is wrong with service please contact system administrator
+	 */
+
+	router.get('/stores/count', (req, res) => {
+		db.stores.aggregate([
+			{ $group: { _id: null, count: { $sum: 1 } } },
+			{ $project: { _id: 0, count: 1 } }
+		], (error, docs) => {
+			if (error) {
+				res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
+			}
+			res.json(docs);
+		})
+	});
+
+
 	/**
 	 * @swagger
 	 * /admin/stores:

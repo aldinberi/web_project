@@ -1,6 +1,77 @@
 module.exports = (router, db, mongojs) => {
 	/**
 	 * @swagger
+	 * /admin/products/count:
+	 *   get:
+	 *     tags:
+	 *       - products
+	 *     name: getProductCount
+	 *     summary: Get count of products in system
+	 *     security:
+	 *       - bearerAuth: []
+	 *     produces:
+	 *       - application/json
+	 *     responses:
+	 *       200:
+	 *           description: Returned count of products in system
+	 *       400:
+	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
+	 *       500:
+	 *           description: Something is wrong with service please contact system administrator
+	 */
+
+	router.get('/products/count', (req, res) => {
+		db.store_products.aggregate([
+			{ $group: { _id: null, count: { $sum: 1 } } },
+			{ $project: { _id: 0, count: 1 } }
+		], (error, docs) => {
+			if (error) {
+				res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
+			}
+			res.json(docs);
+		})
+	});
+
+	/**
+	 * @swagger
+	 * /admin/products/count/completed:
+	 *   get:
+	 *     tags:
+	 *       - products
+	 *     name: getOrderProductsCount
+	 *     summary: Get count of orderd products in system
+	 *     security:
+	 *       - bearerAuth: []
+	 *     produces:
+	 *       - application/json
+	 *     responses:
+	 *       200:
+	 *           description: Returned count of orderd products in system
+	 *       400:
+	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
+	 *       500:
+	 *           description: Something is wrong with service please contact system administrator
+	 */
+
+	router.get('/products/count/completed', (req, res) => {
+		db.shopping_carts.aggregate([
+			{ $match: { status: 1.0 } },
+			{ $group: { _id: null, count: { $sum: 1 } } },
+			{ $project: { _id: 0, count: 1 } }
+		], (error, docs) => {
+			if (error) {
+				res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
+			}
+			res.json(docs);
+		})
+	});
+
+	/**
+	 * @swagger
 	 * /admin/products:
 	 *   post:
 	 *     tags:
