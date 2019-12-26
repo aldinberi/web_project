@@ -24,8 +24,6 @@ import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
 import {
-  dataPie,
-  legendPie,
   dataSales,
   optionsSales,
   responsiveSales,
@@ -41,31 +39,13 @@ class Dashboard extends Component {
     users: null,
     products: null,
     stores: null,
-    orders: null
-  }
-  createLegend(json) {
-    var legend = [];
-    for (var i = 0; i < json["names"].length; i++) {
-      var type = "fa fa-circle text-" + json["types"][i];
-      legend.push(<i className={type} key={i} />);
-      legend.push(" ");
-      legend.push(json["names"][i]);
-    }
-    return legend;
+    orders: null,
+    legend: null,
+    dataPie: null
   }
 
-  componentDidMount() {
-    Axios.get('http://localhost:3001/admin/users/count'
-    ).then(response => {
-      this.setState({
-        users: response.data[0].count
-      })
-    }).catch(error => {
-      console.log(error.response);
-    }).finally(() => {
-      console.log(`${this.state.users} number retrived`);
-    });
 
+  getProducts = () => {
     Axios.get('http://localhost:3001/admin/products/count'
     ).then(response => {
       this.setState({
@@ -76,7 +56,22 @@ class Dashboard extends Component {
     }).finally(() => {
       console.log(`${this.state.products} number retrived`);
     });
+  }
 
+  getUsers = () => {
+    Axios.get('http://localhost:3001/admin/users/count'
+    ).then(response => {
+      this.setState({
+        users: response.data[0].count
+      })
+    }).catch(error => {
+      console.log(error.response);
+    }).finally(() => {
+      console.log(`${this.state.users} number retrived`);
+    });
+  }
+
+  getStores = () => {
     Axios.get('http://localhost:3001/admin/stores/count'
     ).then(response => {
       this.setState({
@@ -87,7 +82,9 @@ class Dashboard extends Component {
     }).finally(() => {
       console.log(`${this.state.products} number retrived`);
     });
+  }
 
+  getOrders = () => {
     Axios.get('http://localhost:3001/admin/products/count/completed'
     ).then(response => {
       this.setState({
@@ -98,8 +95,56 @@ class Dashboard extends Component {
     }).finally(() => {
       console.log(`${this.state.orders} number retrived`);
     });
-
   }
+
+  createPieLegend = async () => {
+    let res = await Axios.get('http://localhost:3001/admin/stores/numberOfProducts');
+
+    console.log(res);
+    let json = {
+      names: [],
+      types: ["info", "danger", "warning", "success"]
+    };
+
+    let dataPie = {
+      labels: [],
+      series: []
+    };
+
+
+    for (let i = 0; i < res.data.length; i++) {
+      json.names.unshift(res.data[i].name);
+      let procent = (this.state.products / res.data[i].count) * 100;
+      dataPie.series.unshift(procent);
+      dataPie.labels.unshift(procent + "%");
+    }
+
+    console.log(json);
+    console.log(dataPie);
+
+
+    let legend = [];
+    for (let i = 0; i < json["names"].length; i++) {
+      let type = "fa fa-circle text-" + json["types"][i];
+      legend.push(<i className={type} key={i} />);
+      legend.push(" ");
+      legend.push(json["names"][i]);
+    }
+    console.log(legend);
+    this.setState({
+      legend: legend,
+      dataPie: dataPie
+    })
+  }
+
+  componentDidMount = () => {
+    this.getProducts();
+    this.getUsers();
+    this.getStores();
+    this.getOrders();
+    this.createPieLegend();
+  }
+
   render() {
     return (
       <div className="content">
@@ -145,50 +190,6 @@ class Dashboard extends Component {
           <Row>
             <Col md={8}>
               <Card
-                statsIcon="fa fa-history"
-                id="chartHours"
-                title="Users Behavior"
-                category="24 Hours performance"
-                stats="Updated 3 minutes ago"
-                content={
-                  <div className="ct-chart">
-                    <ChartistGraph
-                      data={dataSales}
-                      type="Line"
-                      options={optionsSales}
-                      responsiveOptions={responsiveSales}
-                    />
-                  </div>
-                }
-                legend={
-                  <div className="legend">{this.createLegend(legendSales)}</div>
-                }
-              />
-            </Col>
-            <Col md={4}>
-              <Card
-                statsIcon="fa fa-clock-o"
-                title="Email Statistics"
-                category="Last Campaign Performance"
-                stats="Campaign sent 2 days ago"
-                content={
-                  <div
-                    id="chartPreferences"
-                    className="ct-chart ct-perfect-fourth"
-                  >
-                    <ChartistGraph data={dataPie} type="Pie" />
-                  </div>
-                }
-                legend={
-                  <div className="legend">{this.createLegend(legendPie)}</div>
-                }
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col md={6}>
-              <Card
                 id="chartActivity"
                 title="2014 Sales"
                 category="All products including Taxes"
@@ -205,23 +206,26 @@ class Dashboard extends Component {
                   </div>
                 }
                 legend={
-                  <div className="legend">{this.createLegend(legendBar)}</div>
+                  <div className="legend"></div>
                 }
               />
             </Col>
-
-            <Col md={6}>
+            <Col md={4}>
               <Card
-                title="Tasks"
-                category="Backend development"
-                stats="Updated 3 minutes ago"
-                statsIcon="fa fa-history"
+                statsIcon="fa fa-clock-o"
+                title="Store Statistics"
+                category="Precentage of products per store"
+                stats="Updated now"
                 content={
-                  <div className="table-full-width">
-                    <table className="table">
-                      <Tasks />
-                    </table>
+                  <div
+                    id="chartPreferences"
+                    className="ct-chart ct-perfect-fourth"
+                  >
+                    <ChartistGraph data={this.state.dataPie} type="Pie" />
                   </div>
+                }
+                legend={
+                  <div className="legend">{this.state.legend}</div>
                 }
               />
             </Col>

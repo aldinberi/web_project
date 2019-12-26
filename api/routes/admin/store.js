@@ -35,6 +35,42 @@ module.exports = (router, db, mongojs) => {
 		})
 	});
 
+	/**
+	 * @swagger
+	 * /admin/stores/numberOfProducts:
+	 *   get:
+	 *     tags:
+	 *       - stores
+	 *     name: getStoreProductNumber
+	 *     summary: Get number of products in stores 
+	 *     security:
+	 *       - bearerAuth: []
+	 *     produces:
+	 *       - application/json
+	 *     responses:
+	 *       200:
+	 *           description: Returned number of products in stores  in system
+	 *       400:
+	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
+	 *       500:
+	 *           description: Something is wrong with service please contact system administrator
+	 */
+
+	router.get('/stores/numberOfProducts', (req, res) => {
+		db.store_products.aggregate([
+			{ $group: { _id: "$store_id", count: { $sum: 1 } } },
+			{ $lookup: { from: "stores", localField: "_id", foreignField: "_id", as: "store" } },
+			{ $unwind: "$store" },
+			{ $project: { _id: 0, name: "$store.name", count: 1 } }
+		], (error, docs) => {
+			if (error) {
+				res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
+			}
+			res.json(docs);
+		})
+	});
 
 	/**
 	 * @swagger
