@@ -19,18 +19,17 @@ import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
 import Axios from 'axios';
-import config from '../config.js';
+import Config from 'config.js'
 
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import {
-  dataBar,
   optionsBar,
   responsiveBar,
   legendBar
 } from "variables/Variables.jsx";
 
-const url = process.env.BASE_URL || config.BASE_URL;
+
 
 class Dashboard extends Component {
   state = {
@@ -39,20 +38,45 @@ class Dashboard extends Component {
     stores: null,
     orders: null,
     legend: null,
-    dataPie: null
-  }
-
-  getBarData = async () => {
-    let res = await Axios.get(url + 'admin/users');
-    for (let i = 0; i < res.data.length; i++) {
-      let signup_time = new Date(res.data[i].signup_time)
-      console.log(signup_time.getMonth());
-      dataBar.series[0][signup_time.getMonth() - 1]++;
+    dataPie: null,
+    dataBar: {
+      labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "Mai",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+      ],
+      series: [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      ]
     }
   }
 
+
+  getBarData = async () => {
+    let dataBar = this.state.dataBar;
+
+    let res = await Axios.get(Config.BASE_URL + 'admin/users');
+    for (let i = 0; i < res.data.length; i++) {
+      let signup_time = new Date(res.data[i].signup_time)
+      dataBar.series[0][signup_time.getMonth() - 1]++;
+    }
+
+    this.setState({
+      dataBar: dataBar
+    })
+  }
+
   getProducts = () => {
-    Axios.get(url + 'admin/products/count'
+    Axios.get(Config.BASE_URL + 'admin/products/count'
     ).then(response => {
       this.setState({
         products: response.data[0].count
@@ -65,7 +89,7 @@ class Dashboard extends Component {
   }
 
   getUsers = () => {
-    Axios.get(url + 'admin/users/count'
+    Axios.get(Config.BASE_URL + 'admin/users/count'
     ).then(response => {
       this.setState({
         users: response.data[0].count
@@ -78,7 +102,7 @@ class Dashboard extends Component {
   }
 
   getStores = () => {
-    Axios.get(url + 'admin/stores/count'
+    Axios.get(Config.BASE_URL + 'admin/stores/count'
     ).then(response => {
       this.setState({
         stores: response.data[0].count
@@ -91,7 +115,7 @@ class Dashboard extends Component {
   }
 
   getOrders = () => {
-    Axios.get(url + 'admin/products/count/completed'
+    Axios.get(Config.BASE_URL + 'admin/products/count/completed'
     ).then(response => {
       this.setState({
         orders: response.data[0].count
@@ -115,7 +139,7 @@ class Dashboard extends Component {
   }
 
   createPieLegend = async () => {
-    let res = await Axios.get(url + 'admin/stores/numberOfProducts');
+    let res = await Axios.get(Config.BASE_URL + 'admin/stores/numberOfProducts');
 
     let json = {
       names: [],
@@ -209,7 +233,7 @@ class Dashboard extends Component {
                 content={
                   <div className="ct-chart">
                     <ChartistGraph
-                      data={dataBar}
+                      data={this.state.dataBar}
                       type="Bar"
                       options={optionsBar}
                       responsiveOptions={responsiveBar}
