@@ -3,7 +3,7 @@ let baseUrl;
 if (!process.env.HEROKU) {
     baseUrl = 'http://localhost:3001/'
 } else {
-    baseUrl = 'https://gran-app-react.herokuapp.com/'
+    baseUrl = `http://localhost:${process.env.PORT}/`
 }
 
 module.exports = {
