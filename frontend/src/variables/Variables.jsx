@@ -569,8 +569,7 @@ var dataBar = {
     "Dec"
   ],
   series: [
-    [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895],
-    [412, 243, 280, 580, 453, 353, 300, 364, 368, 410, 636, 695]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ]
 };
 var optionsBar = {
@@ -594,8 +593,8 @@ var responsiveBar = [
   ]
 ];
 var legendBar = {
-  names: ["Tesla Model S", "BMW 5 Series"],
-  types: ["info", "danger"]
+  names: ["Users"],
+  types: ["info"]
 };
 
 module.exports = {

@@ -19,20 +19,18 @@ import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
 import Axios from 'axios';
+import config from '../config.js';
 
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
 import {
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
   dataBar,
   optionsBar,
   responsiveBar,
   legendBar
 } from "variables/Variables.jsx";
+
+const url = process.env.BASE_URL || config.BASE_URL;
 
 class Dashboard extends Component {
   state = {
@@ -44,9 +42,17 @@ class Dashboard extends Component {
     dataPie: null
   }
 
+  getBarData = async () => {
+    let res = await Axios.get(url + 'admin/users');
+    for (let i = 0; i < res.data.length; i++) {
+      let signup_time = new Date(res.data[i].signup_time)
+      console.log(signup_time.getMonth());
+      dataBar.series[0][signup_time.getMonth() - 1]++;
+    }
+  }
 
   getProducts = () => {
-    Axios.get('http://localhost:3001/admin/products/count'
+    Axios.get(url + 'admin/products/count'
     ).then(response => {
       this.setState({
         products: response.data[0].count
@@ -59,7 +65,7 @@ class Dashboard extends Component {
   }
 
   getUsers = () => {
-    Axios.get('http://localhost:3001/admin/users/count'
+    Axios.get(url + 'admin/users/count'
     ).then(response => {
       this.setState({
         users: response.data[0].count
@@ -72,7 +78,7 @@ class Dashboard extends Component {
   }
 
   getStores = () => {
-    Axios.get('http://localhost:3001/admin/stores/count'
+    Axios.get(url + 'admin/stores/count'
     ).then(response => {
       this.setState({
         stores: response.data[0].count
@@ -85,7 +91,7 @@ class Dashboard extends Component {
   }
 
   getOrders = () => {
-    Axios.get('http://localhost:3001/admin/products/count/completed'
+    Axios.get(url + 'admin/products/count/completed'
     ).then(response => {
       this.setState({
         orders: response.data[0].count
@@ -97,10 +103,20 @@ class Dashboard extends Component {
     });
   }
 
-  createPieLegend = async () => {
-    let res = await Axios.get('http://localhost:3001/admin/stores/numberOfProducts');
+  createBarLegend = (json) => {
+    let legend = [];
+    for (let i = 0; i < json["names"].length; i++) {
+      let type = "fa fa-circle text-" + json["types"][i];
+      legend.push(<i className={type} key={i} />);
+      legend.push(" ");
+      legend.push(json["names"][i]);
+    }
+    return legend;
+  }
 
-    console.log(res);
+  createPieLegend = async () => {
+    let res = await Axios.get(url + 'admin/stores/numberOfProducts');
+
     let json = {
       names: [],
       types: ["info", "danger", "warning", "success"]
@@ -111,17 +127,12 @@ class Dashboard extends Component {
       series: []
     };
 
-
     for (let i = 0; i < res.data.length; i++) {
       json.names.unshift(res.data[i].name);
       let procent = (this.state.products / res.data[i].count) * 100;
       dataPie.series.unshift(procent);
       dataPie.labels.unshift(procent + "%");
     }
-
-    console.log(json);
-    console.log(dataPie);
-
 
     let legend = [];
     for (let i = 0; i < json["names"].length; i++) {
@@ -130,7 +141,6 @@ class Dashboard extends Component {
       legend.push(" ");
       legend.push(json["names"][i]);
     }
-    console.log(legend);
     this.setState({
       legend: legend,
       dataPie: dataPie
@@ -143,6 +153,7 @@ class Dashboard extends Component {
     this.getStores();
     this.getOrders();
     this.createPieLegend();
+    this.getBarData();
   }
 
   render() {
@@ -191,8 +202,8 @@ class Dashboard extends Component {
             <Col md={8}>
               <Card
                 id="chartActivity"
-                title="2014 Sales"
-                category="All products including Taxes"
+                title="Signed up users"
+                category="Number of sign ups per month"
                 stats="Data information certified"
                 statsIcon="fa fa-check"
                 content={
@@ -206,7 +217,7 @@ class Dashboard extends Component {
                   </div>
                 }
                 legend={
-                  <div className="legend"></div>
+                  <div className="legend">{this.createBarLegend(legendBar)}</div>
                 }
               />
             </Col>
