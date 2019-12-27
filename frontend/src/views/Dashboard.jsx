@@ -29,7 +29,7 @@ import {
   legendBar
 } from "variables/Variables.jsx";
 
-
+console.log(Config.BASE_URL);
 
 class Dashboard extends Component {
   state = {
