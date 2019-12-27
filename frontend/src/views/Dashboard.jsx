@@ -19,7 +19,7 @@ import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
 import Axios from 'axios';
-import Config from 'config.js'
+//import Config from 'config.js'
 
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
@@ -29,7 +29,9 @@ import {
   legendBar
 } from "variables/Variables.jsx";
 
-console.log(Config.BASE_URL);
+let Config = {
+  BASE_URL: process.env.BASE_URL || 'http://localhost:3001/'
+};
 
 class Dashboard extends Component {
   state = {
