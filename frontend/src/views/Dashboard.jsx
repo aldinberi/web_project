@@ -33,6 +33,13 @@ let Config = {
   BASE_URL: process.env.BASE_URL || 'http://localhost:3001/'
 };
 
+let BASE_URL
+if (!process.env.HEROKU) {
+  BASE_URL = 'http://localhost:3001/'
+} else {
+  BASE_URL = 'https://gran-app-react.herokuapp.com/'
+}
+
 class Dashboard extends Component {
   state = {
     users: null,
@@ -66,7 +73,7 @@ class Dashboard extends Component {
   getBarData = async () => {
     let dataBar = this.state.dataBar;
 
-    let res = await Axios.get(Config.BASE_URL + 'admin/users');
+    let res = await Axios.get(BASE_URL + 'admin/users');
     for (let i = 0; i < res.data.length; i++) {
       let signup_time = new Date(res.data[i].signup_time)
       dataBar.series[0][signup_time.getMonth() - 1]++;
@@ -78,7 +85,7 @@ class Dashboard extends Component {
   }
 
   getProducts = () => {
-    Axios.get(Config.BASE_URL + 'admin/products/count'
+    Axios.get(BASE_URL + 'admin/products/count'
     ).then(response => {
       this.setState({
         products: response.data[0].count
@@ -91,7 +98,7 @@ class Dashboard extends Component {
   }
 
   getUsers = () => {
-    Axios.get(Config.BASE_URL + 'admin/users/count'
+    Axios.get(BASE_URL + 'admin/users/count'
     ).then(response => {
       this.setState({
         users: response.data[0].count
@@ -104,7 +111,7 @@ class Dashboard extends Component {
   }
 
   getStores = () => {
-    Axios.get(Config.BASE_URL + 'admin/stores/count'
+    Axios.get(BASE_URL + 'admin/stores/count'
     ).then(response => {
       this.setState({
         stores: response.data[0].count
@@ -117,7 +124,7 @@ class Dashboard extends Component {
   }
 
   getOrders = () => {
-    Axios.get(Config.BASE_URL + 'admin/products/count/completed'
+    Axios.get(BASE_URL + 'admin/products/count/completed'
     ).then(response => {
       this.setState({
         orders: response.data[0].count
@@ -141,7 +148,7 @@ class Dashboard extends Component {
   }
 
   createPieLegend = async () => {
-    let res = await Axios.get(Config.BASE_URL + 'admin/stores/numberOfProducts');
+    let res = await Axios.get(BASE_URL + 'admin/stores/numberOfProducts');
 
     let json = {
       names: [],
