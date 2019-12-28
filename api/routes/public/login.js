@@ -25,6 +25,7 @@ module.exports = (router, db, mongojs, config, google, jwt) => {
 	 */
 
 	router.get("/login", (req, res) => {
+		res.header('Access-Control-Allow-Origin', '*');
 		let code = req.query.code;
 		if (code) {
 			oauth2Client.getToken(code).then(result => {
@@ -44,7 +45,7 @@ module.exports = (router, db, mongojs, config, google, jwt) => {
 						{
 							query: { email: data.email },
 							update: {
-								$setOnInsert: { email: data.email, name: data.name, signup_time: new Date(), type: "customer" }
+								$setOnInsert: { email: data.email, name: data.name, signup_time: new Date(), type: "customer", picture: data.picture }
 							},
 							new: true,
 							upsert: true

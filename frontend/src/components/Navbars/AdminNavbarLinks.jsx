@@ -17,8 +17,21 @@
 */
 import React, { Component } from "react";
 import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
+import ls from 'local-storage';
+import Axios from "axios";
 
 class AdminNavbarLinks extends Component {
+
+  loginUser = async () => {
+    let res = await Axios.get('http://localhost:3001/login', {
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      },
+      responseType: 'json',
+    });
+    console.log(res.data);
+  }
+
   render() {
     const notification = (
       <div>
@@ -61,8 +74,8 @@ class AdminNavbarLinks extends Component {
             <MenuItem divider />
             <MenuItem eventKey={2.5}>Separated link</MenuItem>
           </NavDropdown>
-          <NavItem eventKey={3} href="#">
-            Log out
+          <NavItem eventKey={3} onClick={this.loginUser}>
+            Log in
           </NavItem>
         </Nav>
       </div>

@@ -1,25 +1,9 @@
-/*!
 
-=========================================================
-* Light Bootstrap Dashboard React - v1.3.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/light-bootstrap-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/light-bootstrap-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
 import Axios from 'axios';
-//import Config from 'config.js'
+import Config from 'config.js'
 
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
@@ -29,16 +13,8 @@ import {
   legendBar
 } from "variables/Variables.jsx";
 
-let Config = {
-  BASE_URL: process.env.BASE_URL || 'http://localhost:3001/'
-};
 
-let BASE_URL
-if (!process.env.HEROKU) {
-  BASE_URL = 'http://localhost:3001/'
-} else {
-  BASE_URL = 'https://gran-app-react.herokuapp.com/'
-}
+
 
 class Dashboard extends Component {
   state = {
@@ -73,7 +49,7 @@ class Dashboard extends Component {
   getBarData = async () => {
     let dataBar = this.state.dataBar;
 
-    let res = await Axios.get(BASE_URL + 'admin/users');
+    let res = await Axios.get(Config.BASE_URL + 'admin/users');
     for (let i = 0; i < res.data.length; i++) {
       let signup_time = new Date(res.data[i].signup_time)
       dataBar.series[0][signup_time.getMonth() - 1]++;
@@ -85,7 +61,7 @@ class Dashboard extends Component {
   }
 
   getProducts = () => {
-    Axios.get(BASE_URL + 'admin/products/count'
+    Axios.get(Config.BASE_URL + 'admin/products/count'
     ).then(response => {
       this.setState({
         products: response.data[0].count
@@ -98,7 +74,7 @@ class Dashboard extends Component {
   }
 
   getUsers = () => {
-    Axios.get(BASE_URL + 'admin/users/count'
+    Axios.get(Config.BASE_URL + 'admin/users/count'
     ).then(response => {
       this.setState({
         users: response.data[0].count
@@ -111,7 +87,7 @@ class Dashboard extends Component {
   }
 
   getStores = () => {
-    Axios.get(BASE_URL + 'admin/stores/count'
+    Axios.get(Config.BASE_URL + 'admin/stores/count'
     ).then(response => {
       this.setState({
         stores: response.data[0].count
@@ -124,7 +100,7 @@ class Dashboard extends Component {
   }
 
   getOrders = () => {
-    Axios.get(BASE_URL + 'admin/products/count/completed'
+    Axios.get(Config.BASE_URL + 'admin/products/count/completed'
     ).then(response => {
       this.setState({
         orders: response.data[0].count
@@ -148,7 +124,7 @@ class Dashboard extends Component {
   }
 
   createPieLegend = async () => {
-    let res = await Axios.get(BASE_URL + 'admin/stores/numberOfProducts');
+    let res = await Axios.get(Config.BASE_URL + 'admin/stores/numberOfProducts');
 
     let json = {
       names: [],
