@@ -25,12 +25,18 @@ import "./assets/css/animate.min.css";
 import "./assets/sass/light-bootstrap-dashboard-react.scss?v=1.3.0";
 import "./assets/css/demo.css";
 import "./assets/css/pe-icon-7-stroke.css";
-
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import rootReducer from './redurcers/rootReducer.js';
 import App from "App.js";
+
+const store = createStore(rootReducer);
 
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </BrowserRouter>,
   document.getElementById("root")
 );

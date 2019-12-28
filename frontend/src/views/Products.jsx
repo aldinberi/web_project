@@ -1,26 +1,47 @@
 
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
-import { Grid, Row, Col } from "react-bootstrap";
+import { Grid, Row, Col, Table } from "react-bootstrap";
 import Axios from 'axios';
 import Config from 'config.js'
+import { connect } from 'react-redux';
 
 import { Card } from "components/Card/Card.jsx";
+import Button from 'components/CustomButton/CustomButton';
 
 
 
 
 
-class Dashboard extends Component {
+class Products extends Component {
     state = {
-
+        next: 0
     }
 
+    getProducts = async (indicatior = 1) => {
+        let next = this.state.next;
+        if (indicatior) {
+            if (this.props.products.length === 5) {
+                next += 5;
+            }
+        } else {
+            next - 5 < 5 ? (next = 0) : (next -= 5)
+        }
+        console.log(next);
+        let res = await Axios.get(Config.BASE_URL + 'products?skip=' + next);
+        this.setState({
+            next: next
+        });
+        this.props.addProducts(res.data);
+    }
     componentDidMount = () => {
-
+        console.log(this.props.products)
+        if (this.props.products.length === 0) {
+            this.getProducts();
+        }
     }
 
     render() {
+        console.log(this.props);
         return (
             <div className="content">
                 <Grid fluid>
@@ -43,29 +64,49 @@ class Dashboard extends Component {
                                 }
                                 content={
                                     <Row>
-                                        {/* <CardColumns>
-                                    {
-                                        this.state.products.map(product => (
-                                            <Card style={{ width: '18rem', margin: '1rem' }}>
-                                                <Card.Img variant="top" src={product.image} />
-                                                <Card.Body>
-                                                    <Card.Title>{product.name}</Card.Title>
-                                                    <Card.Text>
-                                                        {product.description}
-                                                    </Card.Text>
-                                                </Card.Body>
-                                                <ListGroup className="list-group-flush">
-                                                    <ListGroupItem><b>Category: </b>{product.category}</ListGroupItem>
-                                                    <ListGroupItem><b>Subcategory: </b>{product.subcategory}</ListGroupItem>
-                                                    <ListGroupItem><b>Producer: </b>{product.producer}</ListGroupItem>
-                                                </ListGroup>
-                                                <Card.Footer>
-                                                    <Button variant='primary' as={NavLink} exact to={'/products/' + product._id}>View product</Button>
-                                                </Card.Footer>
-                                            </Card>
-                                        ))
-                                    }
-                                </CardColumns> */}
+                                        <Col sm={12}>
+                                            <div className="table-responsive-md">
+                                                <Table responsive>
+                                                    <thead>
+                                                        <tr>
+                                                            <td>Name</td>
+                                                            <td>Description</td>
+                                                            <td>Category</td>
+                                                            <td>Subcategory</td>
+                                                            <td>Producer</td>
+                                                            <td>Barcode</td>
+                                                            <td>Image</td>
+                                                            <td>Quantity</td>
+                                                            <td>Unit</td>
+                                                            <td>County</td>
+                                                        </tr>
+
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            this.props.products.map(product => {
+                                                                return (
+                                                                    <tr key={product._id}>
+                                                                        <td>{product.name}</td>
+                                                                        <td>{product.description}</td>
+                                                                        <td>{product.category}</td>
+                                                                        <td>{product.subcategory}</td>
+                                                                        <td>{product.producer}</td>
+                                                                        <td>{product.barcode}</td>
+                                                                        <td><a href={product.image}>Image</a></td>
+                                                                        <td>{product.quantity}</td>
+                                                                        <td>{product.unit}</td>
+                                                                        <td>{product.country_of_origin}</td>
+                                                                    </tr>
+                                                                );
+                                                            })
+                                                        }
+                                                    </tbody>
+                                                </Table>
+                                                <Button bsStyle="primary" onClick={() => { this.getProducts() }} pullRight>&gt;</Button>
+                                                <Button bsStyle="primary" onClick={() => { this.getProducts(0) }} pullRight>&lt;</Button>
+                                            </div>
+                                        </Col>
                                     </Row>
                                 }
                             />
@@ -77,4 +118,16 @@ class Dashboard extends Component {
     }
 }
 
-export default Dashboard;
+const mapStateToProps = (state) => {
+    return {
+        products: state.productReducer.products
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addProducts: (products) => { dispatch({ type: 'ADD_PRODUCTS', products: products }) }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Products);
