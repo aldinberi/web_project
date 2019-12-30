@@ -25,7 +25,6 @@ module.exports = (router, db, mongojs, config, google, jwt) => {
 	 */
 
 	router.get("/login", (req, res) => {
-		res.header('Access-Control-Allow-Origin', '*');
 		let code = req.query.code;
 		if (code) {
 			oauth2Client.getToken(code).then(result => {

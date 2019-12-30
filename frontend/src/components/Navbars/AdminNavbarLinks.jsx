@@ -23,10 +23,7 @@ import Axios from "axios";
 class AdminNavbarLinks extends Component {
 
   loginUser = async () => {
-    let res = await Axios.get('http://localhost:3001/login', {
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      },
+    let res = await Axios.get('/login', {
       responseType: 'json',
     });
     console.log(res.data);
@@ -74,7 +71,7 @@ class AdminNavbarLinks extends Component {
             <MenuItem divider />
             <MenuItem eventKey={2.5}>Separated link</MenuItem>
           </NavDropdown>
-          <NavItem eventKey={3} onClick={this.loginUser}>
+          <NavItem eventKey={3} href="/login">
             Log in
           </NavItem>
         </Nav>

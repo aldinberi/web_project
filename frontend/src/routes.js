@@ -7,6 +7,7 @@ import Icons from "views/Icons.jsx";
 import Maps from "views/Maps.jsx";
 import Notifications from "views/Notifications.jsx";
 
+import Login from "components/Navbars/Login"
 
 import Products from "views/Products";
 

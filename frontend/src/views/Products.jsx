@@ -1,9 +1,11 @@
 
 import React, { Component } from "react";
-import { Grid, Row, Col, Table } from "react-bootstrap";
+import { Grid, Row, Col } from "react-bootstrap";
 import Axios from 'axios';
 import Config from 'config.js'
 import { connect } from 'react-redux';
+import BootstrapTable from 'react-bootstrap-table-next';
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 
 import { Card } from "components/Card/Card.jsx";
 import Button from 'components/CustomButton/CustomButton';
@@ -17,6 +19,16 @@ class Products extends Component {
         next: 0
     }
 
+    imageFormatter = (cell, row) => {
+
+        return (
+            <span>
+                <a href={cell}>Image</a>
+            </span>
+
+        );
+    }
+
     getProducts = async (indicatior = 1) => {
         let next = this.state.next;
         if (indicatior) {
@@ -27,7 +39,7 @@ class Products extends Component {
             next - 5 < 5 ? (next = 0) : (next -= 5)
         }
         console.log(next);
-        let res = await Axios.get(Config.BASE_URL + 'products?skip=' + next);
+        let res = await Axios.get('/products?skip=' + next);
         this.setState({
             next: next
         });
@@ -42,8 +54,45 @@ class Products extends Component {
 
     render() {
         console.log(this.props);
+        const { SearchBar } = Search;
+        const columns = [{
+            dataField: 'name',
+            text: 'Name',
+            sort: true
+        }, {
+            dataField: 'description',
+            text: 'Description',
+            sort: true,
+        }, {
+            dataField: 'category',
+            text: 'Category',
+            sort: true,
+        }, {
+            dataField: 'subcategory',
+            text: 'Subcategory',
+        }, {
+            dataField: 'producer',
+            text: 'Producer',
+        }, {
+            dataField: 'barcode',
+            text: 'Barcode',
+        }, {
+            dataField: 'image',
+            text: 'Image',
+            formatter: this.imageFormatter,
+        }, {
+            dataField: 'quantity',
+            text: 'Quantity',
+        }, {
+            dataField: 'unit',
+            text: 'Unit',
+        }, {
+            dataField: 'country_of_origin',
+            text: 'County',
+        }];
         return (
             <div className="content">
+
                 <Grid fluid>
                     <Row>
                         <Col md={12}>
@@ -65,47 +114,29 @@ class Products extends Component {
                                 content={
                                     <Row>
                                         <Col sm={12}>
-                                            <div className="table-responsive-md">
-                                                <Table responsive>
-                                                    <thead>
-                                                        <tr>
-                                                            <td>Name</td>
-                                                            <td>Description</td>
-                                                            <td>Category</td>
-                                                            <td>Subcategory</td>
-                                                            <td>Producer</td>
-                                                            <td>Barcode</td>
-                                                            <td>Image</td>
-                                                            <td>Quantity</td>
-                                                            <td>Unit</td>
-                                                            <td>County</td>
-                                                        </tr>
+                                            <ToolkitProvider
+                                                keyField="_id"
+                                                data={this.props.products}
+                                                columns={columns}
+                                                search
+                                            >
+                                                {
+                                                    toolProps => (
+                                                        < div >
+                                                            <SearchBar {...toolProps.searchProps} />
+                                                            <BootstrapTable
+                                                                {...toolProps.baseProps}
+                                                                striped
+                                                                hover
+                                                                wrapperClasses="table-responsive"
+                                                            />
+                                                        </div>
+                                                    )
+                                                }
+                                            </ToolkitProvider>
+                                            <Button bsStyle="primary" onClick={() => { this.getProducts() }} pullRight>&gt;</Button>
+                                            <Button bsStyle="primary" onClick={() => { this.getProducts(0) }} pullRight>&lt;</Button>
 
-                                                    </thead>
-                                                    <tbody>
-                                                        {
-                                                            this.props.products.map(product => {
-                                                                return (
-                                                                    <tr key={product._id}>
-                                                                        <td>{product.name}</td>
-                                                                        <td>{product.description}</td>
-                                                                        <td>{product.category}</td>
-                                                                        <td>{product.subcategory}</td>
-                                                                        <td>{product.producer}</td>
-                                                                        <td>{product.barcode}</td>
-                                                                        <td><a href={product.image}>Image</a></td>
-                                                                        <td>{product.quantity}</td>
-                                                                        <td>{product.unit}</td>
-                                                                        <td>{product.country_of_origin}</td>
-                                                                    </tr>
-                                                                );
-                                                            })
-                                                        }
-                                                    </tbody>
-                                                </Table>
-                                                <Button bsStyle="primary" onClick={() => { this.getProducts() }} pullRight>&gt;</Button>
-                                                <Button bsStyle="primary" onClick={() => { this.getProducts(0) }} pullRight>&lt;</Button>
-                                            </div>
                                         </Col>
                                     </Row>
                                 }

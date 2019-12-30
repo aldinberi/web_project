@@ -37,6 +37,9 @@
 .all-icons [class*="pe-"]{
     font-size: 40px;
 }
+
+.react-bootstrap-table table {table-layout:auto;}
+
 .all-icons input{
     border: 0;
 }

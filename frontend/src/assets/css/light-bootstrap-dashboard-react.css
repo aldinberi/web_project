@@ -2247,6 +2247,7 @@ body > .navbar-collapse[data-color="purple"]:after {
     top: 0;
     left: 0; }
 
+    .react-bootstrap-table table {table-layout:auto;}
 .ct-perfect-fourth {
   display: block;
   position: relative;
