@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import { Grid, Row, Col } from "react-bootstrap";
 import Axios from 'axios';
-import Config from 'config.js'
 import { connect } from 'react-redux';
 import BootstrapTable from 'react-bootstrap-table-next';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
