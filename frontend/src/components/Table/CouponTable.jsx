@@ -11,7 +11,7 @@ import Modal from 'react-responsive-modal';
 import NotificationSystem from 'react-notification-system';
 import { style } from "variables/Variables.jsx";
 
-class ProductTable extends Component {
+class CouponTable extends Component {
 
     state = {
         next: 0,
@@ -66,35 +66,46 @@ class ProductTable extends Component {
 
         return (
             <span>
-                <Button bsStyle="danger" onClick={() => { this.deleteProduct(cell) }} fill>Delete</Button>
+                <Button bsStyle="danger" onClick={() => { this.deleteCoupon(cell) }} fill>Delete</Button>
             </span>
 
         );
     }
 
-    getProducts = async (indicatior = 1) => {
+    getCoupons = async (indicatior = 1) => {
         let next = this.state.next;
         if (indicatior) {
-            if (this.props.products.length === 5) {
+            if (this.props.coupons.length === 5) {
                 next += 5;
             }
         } else {
             next - 5 < 5 ? (next = 0) : (next -= 5)
         }
-        console.log(next);
-        let res = await Axios.get('/products?skip=' + next);
+
+        let res = await Axios.get('/cupons?skip=' + next);
+
         this.setState({
             next: next
         });
-        this.props.loadProducts(res.data);
+        this.props.loadCoupons(res.data);
+    }
+
+    getStores = async () => {
+        let res = await Axios.get('/stores');
+        this.props.loadStores(res.data);
     }
 
     componentDidMount = () => {
-        console.log(this.props.products)
-        if (this.props.products.length === 0) {
-            this.getProducts();
+
+        if (this.props.coupons.length === 0) {
+            this.getCoupons();
+        }
+
+        if (this.props.stores.length === 0) {
+            this.getStores();
         }
         this.setState({ _notificationSystem: this.refs.notificationSystem })
+
     }
 
     onOpenEditModal = (id) => {
@@ -125,7 +136,7 @@ class ProductTable extends Component {
             </Button>;
 
         this.setState({
-            product: {},
+            coupon: {},
             open: true,
             modalButton: button
         })
@@ -184,10 +195,10 @@ class ProductTable extends Component {
 
     }
 
-    deleteProduct = async (id) => {
+    deleteCoupon = async (id) => {
         try {
-            this.props.deleteProduct(id);
-            await Axios.delete('/admin/products/' + id);
+            this.props.deleteCoupon(id);
+            // await Axios.delete('/admin/products/' + id);
             this.handleNotification('tr', 'success', 'Successfully deleted product');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');
@@ -197,42 +208,27 @@ class ProductTable extends Component {
 
     render() {
         console.log(this.props);
+        console.log(this.props.stores)
         const { SearchBar } = Search;
         const columns = [{
-            dataField: 'name',
-            text: 'Name',
+            dataField: 'product_name',
+            text: 'Product name',
             sort: true
         }, {
-            dataField: 'description',
-            text: 'Description',
-            sort: true,
+            dataField: 'new_price',
+            text: 'New price',
+            sort: true
         }, {
-            dataField: 'category',
-            text: 'Category',
-            sort: true,
+            dataField: 'cupon_code',
+            text: 'Coupon code',
+            sort: true
         }, {
-            dataField: 'subcategory',
-            text: 'Subcategory',
+            dataField: 'store_name',
+            text: 'Store name',
+            sort: true
         }, {
-            dataField: 'producer',
-            text: 'Producer',
-            sort: true,
-        }, {
-            dataField: 'barcode',
-            text: 'Barcode',
-        }, {
-            dataField: 'image',
-            text: 'Image',
-            formatter: this.imageFormatter
-        }, {
-            dataField: 'quantity',
-            text: 'Quantity',
-        }, {
-            dataField: 'unit',
-            text: 'Unit',
-        }, {
-            dataField: 'country_of_origin',
-            text: 'County',
+            dataField: 'store_address',
+            text: 'Store address',
         }, {
             dataField: '_id',
             text: 'Edit',
@@ -276,7 +272,7 @@ class ProductTable extends Component {
                                     {
                                         name: "subcategory",
                                         label: "Subcategory",
-                                        type: "text",
+                                        type: "email",
                                         bsClass: "form-control",
                                         placeholder: "Enter subcategory",
                                         value: this.state.product.subcategory,
@@ -400,7 +396,7 @@ class ProductTable extends Component {
                                         <Col sm={12}>
                                             <ToolkitProvider
                                                 keyField="_id"
-                                                data={this.props.products}
+                                                data={this.props.coupons}
                                                 columns={columns}
                                                 search
                                             >
@@ -418,9 +414,9 @@ class ProductTable extends Component {
                                                     )
                                                 }
                                             </ToolkitProvider>
-                                            <Button bsStyle="primary" onClick={() => { this.getProducts() }} pullRight>&gt;</Button>
-                                            <Button bsStyle="primary" onClick={() => { this.getProducts(0) }} pullRight>&lt;</Button>
-                                            <Button bsStyle="info" onClick={() => { this.onOpenAddtModal() }}>Add product</Button>
+                                            <Button bsStyle="primary" onClick={() => { this.getCoupons() }} pullRight>&gt;</Button>
+                                            <Button bsStyle="primary" onClick={() => { this.getCoupons(0) }} pullRight>&lt;</Button>
+                                            <Button bsStyle="info" onClick={() => { this.onOpenAddtModal() }}>Add coupon</Button>
 
                                         </Col>
 
@@ -439,19 +435,22 @@ class ProductTable extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        products: state.productReducer.products
+        stores: state.storeReducer.stores,
+        coupons: state.couponReducer.coupons,
+
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addProduct: (product) => { dispatch({ type: 'ADD_PRODUCT', product: product }) },
-        loadProducts: (products) => { dispatch({ type: 'LOAD_PRODUCTS', products: products }) },
-        deleteProduct: (id) => { dispatch({ type: 'DELETE_PRODUCT', id: id }) },
-        updateProduct: (id, product) => { dispatch({ type: 'UPDATE_PRODUCT', id: id, product: product }) }
+        addCoupon: (coupon) => { dispatch({ type: 'ADD_COUPON', coupons: coupon }) },
+        loadCoupons: (coupons) => { dispatch({ type: 'LOAD_COUPONS', coupons: coupons }) },
+        deleteCoupon: (id) => { dispatch({ type: 'DELETE_COUPON', id: id }) },
+        updateCoupon: (id, coupon) => { dispatch({ type: 'UPDATE_COUPON', id: id, coupons: coupon }) },
+        loadStores: (stores) => { dispatch({ type: 'LOAD_STORES', stores: stores }) }
     }
 }
 
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductTable)
+export default connect(mapStateToProps, mapDispatchToProps)(CouponTable)

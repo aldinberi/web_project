@@ -23,7 +23,6 @@ const productReducer = (state = initState, action) => {
     }
 
     if (action.type === 'DELETE_PRODUCT') {
-        console.log(action.id);
         let newProducts = state.products.filter(product => {
             return product._id !== action.id
         });
@@ -34,14 +33,11 @@ const productReducer = (state = initState, action) => {
     }
 
     if (action.type === 'UPDATE_PRODUCT') {
-        console.log("U reduceru " + action.product);
         let newProducts = state.products.map(product => {
             if (product._id === action.id)
                 product = action.product
             return (product)
         });
-        console.log(newProducts);
-
         return {
             ...state,
             products: newProducts

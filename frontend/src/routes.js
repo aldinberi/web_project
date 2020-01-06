@@ -9,6 +9,10 @@ import Notifications from "views/Notifications.jsx";
 
 import Products from "views/Products";
 
+import Coupons from "views/Coupons";
+
+import Stores from "views/Stores";
+
 const dashboardRoutes = [
   {
     path: "/dashboard",
@@ -22,6 +26,20 @@ const dashboardRoutes = [
     name: "Products",
     icon: "pe-7s-drawer",
     component: Products,
+    layout: "/admin"
+  },
+  {
+    path: "/coupons",
+    name: "Coupons",
+    icon: "pe-7s-drawer",
+    component: Coupons,
+    layout: "/admin"
+  },
+  {
+    path: "/stores",
+    name: "Stores",
+    icon: "pe-7s-drawer",
+    component: Stores,
     layout: "/admin"
   },
   {
