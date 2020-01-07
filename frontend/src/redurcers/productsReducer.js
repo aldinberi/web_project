@@ -33,11 +33,17 @@ const productReducer = (state = initState, action) => {
     }
 
     if (action.type === 'UPDATE_PRODUCT') {
+        action.product._id = action.id;
+        let new_pro = JSON.parse(JSON.stringify(action.product));
         let newProducts = state.products.map(product => {
-            if (product._id === action.id)
-                product = action.product
+            if (product._id === action.id) {
+                product = new_pro
+            }
             return (product)
+
         });
+        console.log("REc");
+        console.log(newProducts);
         return {
             ...state,
             products: newProducts

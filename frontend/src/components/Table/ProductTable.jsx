@@ -16,7 +16,9 @@ class ProductTable extends Component {
     state = {
         next: 0,
         open: false,
-        product: {},
+        product: {
+            id: 1
+        },
         modalButton: "",
         _notificationSystem: null
     }
@@ -125,7 +127,7 @@ class ProductTable extends Component {
             </Button>;
 
         this.setState({
-            product: {},
+            product: { id: 1 },
             open: true,
             modalButton: button
         })
@@ -160,13 +162,13 @@ class ProductTable extends Component {
     onSubmitUpdate = async (event) => {
         try {
             event.preventDefault();
+            this.props.updateProduct(this.state.product._id, this.state.product);
             this.setState({ open: false });
-            let product = this.state.product;
-            let id = product._id;
-            this.props.updateProduct(id, product);
-            delete product._id;
-            console.log(product);
-            await Axios.put('/admin/products/' + id, { ...product });
+            let id = this.state.product._id;
+            delete this.state.product._id;
+            let res = await Axios.put('/admin/products/' + id, { ...this.state.product });
+            let updatedProduct = res.data;
+            this.props.updateProduct(id, updatedProduct);
             this.handleNotification('tr', 'success', 'Successfully edited product');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');
@@ -196,7 +198,8 @@ class ProductTable extends Component {
 
 
     render() {
-        console.log(this.props);
+        console.log("prop")
+        console.log(this.props.products);
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'name',

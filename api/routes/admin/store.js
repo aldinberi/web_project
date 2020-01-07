@@ -210,7 +210,6 @@ module.exports = (router, db, mongojs) => {
 	router.put("/stores/:id", (req, res) => {
 		var id = req.params.id;
 		var object = req.body;
-
 		db.stores.findAndModify(
 			{
 				query: { _id: mongojs.ObjectId(id) },

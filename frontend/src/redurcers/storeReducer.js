@@ -7,7 +7,6 @@ const initState = {
 const storeReducer = (state = initState, action) => {
 
     if (action.type === 'LOAD_STORES') {
-        console.log(action.stores)
         return {
             ...state,
             stores: action.stores
@@ -15,11 +14,10 @@ const storeReducer = (state = initState, action) => {
     }
 
     if (action.type === 'DELETE_STORE') {
-        console.log('Tu sam');
         let newStores = state.stores.filter(store => {
             return store._id !== action.id
         });
-        console.log(newStores);
+
         return {
             ...state,
             stores: newStores
@@ -27,11 +25,15 @@ const storeReducer = (state = initState, action) => {
     }
 
     if (action.type === 'UPDATE_STORE') {
+        action.store._id = action.id;
+        let new_store = JSON.parse(JSON.stringify(action.store));
+        console.log(action.store);
         let newStores = state.stores.map(store => {
             if (store._id === action.id)
-                store = action.store
+                store = new_store
             return (store)
         });
+        //console.log(newStores);
         return {
             ...state,
             stores: newStores

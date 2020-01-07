@@ -48,50 +48,6 @@ class StoreTable extends Component {
         });
     }
 
-    // imageFormatter = (cell, row) => {
-
-    //     return (
-    //         <span>
-    //             <a href={cell}>Image</a>
-    //         </span>
-
-    //     );
-    // }
-
-    // paymentFormatter = (cell, row) => {
-    //     let string = ""
-    //     if (cell.cash === 1) {
-    //         string += ", cash"
-    //     }
-    //     if (cell.credit_card === 1) {
-    //         string += ", credit card"
-    //     }
-    //     string = string.slice(2);
-    //     return (
-    //         string
-    //     );
-    // }
-
-    // editFormatter = (cell, row) => {
-
-    //     return (
-    //         <span>
-    //             <Button bsStyle="info" onClick={() => { this.onOpenEditModal(cell) }}>Edit</Button>
-    //         </span>
-
-    //     );
-    // }
-
-    // deleteFormatter = (cell, row) => {
-
-    //     return (
-    //         <span>
-    //             <Button bsStyle="danger" onClick={() => { this.deleteStore(cell) }} fill>Delete</Button>
-    //         </span>
-
-    //     );
-    // }
-
     imageFormatter = (cell, row) => {
 
         return (
@@ -99,6 +55,22 @@ class StoreTable extends Component {
                 <a href={cell}>Image</a>
             </span>
 
+        );
+    }
+
+
+
+    paymentFormatter = (cell, row) => {
+        let string = ""
+        if (cell.cash === 1) {
+            string += ", cash"
+        }
+        if (cell.credit_card === 1) {
+            string += ", credit card"
+        }
+        string = string.slice(2);
+        return (
+            string
         );
     }
 
@@ -116,11 +88,13 @@ class StoreTable extends Component {
 
         return (
             <span>
-                <Button bsStyle="danger" onClick={() => { this.deleteProduct(cell) }} fill>Delete</Button>
+                <Button bsStyle="danger" onClick={() => { this.deleteStore(cell) }} fill>Delete</Button>
             </span>
 
         );
     }
+
+
 
     getStores = async (indicatior = 1) => {
         let next = this.state.next;
@@ -133,24 +107,6 @@ class StoreTable extends Component {
         }
 
         let res = await Axios.get('/stores?skip=' + next);
-
-        this.setState({
-            next: next
-        });
-        this.props.loadStores(res.data);
-    }
-
-    getProducts = async (indicatior = 1) => {
-        let next = this.state.next;
-        if (indicatior) {
-            if (this.props.products.length === 5) {
-                next += 5;
-            }
-        } else {
-            next - 5 < 5 ? (next = 0) : (next -= 5)
-        }
-        console.log(next);
-        let res = await Axios.get('/stores?skip=' + next);
         this.setState({
             next: next
         });
@@ -158,62 +114,20 @@ class StoreTable extends Component {
     }
 
 
-    // componentDidMount = () => {
-    //     if (this.props.stores.length === 0) {
-    //         this.getStores();
-    //     }
-    //     this.setState({ _notificationSystem: this.refs.notificationSystem })
-
-    // }
 
     componentDidMount = () => {
-        console.log(this.props.products)
-        if (this.props.products.length === 0) {
-            this.getProducts();
+        if (this.props.stores.length === 0) {
+            this.getStores();
         }
         this.setState({ _notificationSystem: this.refs.notificationSystem })
+
     }
 
-    onSubmitUpdate = async (event) => {
-        try {
-            event.preventDefault();
-            this.setState({ open: false });
-            let product = this.state.product;
-            let id = product._id;
-            this.props.updateStore(id, product);
-            // delete product._id;
-            console.log(product);
-            //await Axios.put('/admin/products/' + id, { ...product });
-            this.handleNotification('tr', 'success', 'Successfully edited product');
-        } catch (error) {
-            this.handleNotification('tr', 'error', 'Something went wrong');
-        }
-
-    };
-
-    // onOpenEditModal = (id) => {
-    //     let stores = this.props.stores;
-    //     let store = stores.filter(store => {
-    //         return store._id === id
-    //     });
-    //     let button =
-    //         <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitUpdate}>
-    //             Update
-    //         </Button>;
-
-
-    //     this.setState({
-    //         store: store[0],
-    //         open: true,
-    //         modalButton: button
-    //     })
-
-    // };
 
     onOpenEditModal = (id) => {
-        let products = this.props.products;
-        let product = products.filter(product => {
-            return product._id === id
+        let stores = this.props.stores;
+        let store = stores.filter(store => {
+            return store._id === id
         });
         let button =
             <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitUpdate}>
@@ -221,91 +135,88 @@ class StoreTable extends Component {
             </Button>;
 
 
-        console.log(product);
         this.setState({
-            product: product[0],
+            store: store[0],
             open: true,
             modalButton: button
         })
 
     };
 
-    // onOpenAddtModal = () => {
-
-    //     let button =
-    //         <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitAdd}>
-    //             Add
-    //         </Button>;
-
-    //     this.setState({
-    //         store: {},
-    //         open: true,
-    //         modalButton: button
-    //     })
-
-    // };
-
-    // onSubmitAdd = async (event) => {
-    //     try {
-    //         event.preventDefault();
-    //         this.setState({ open: false });
-    //         let product = this.state.product;
-    //         product.date_added = new Date();
-    //         product.quantity = parseInt(product.quantity);
-    //         product.barcode = parseInt(product.barcode);
-    //         console.log(product);
-    //         let res = await Axios.post('/admin/products', { ...product });
-
-    //         this.props.addProduct(res.data);
-    //         this.handleNotification('tr', 'success', 'Successfully added product');
-
-    //     } catch (error) {
-    //         console.log(error);
-    //         this.handleNotification('tr', 'error', "Validation went wrong");
-    //     }
-
-    // };
-
-    // onCloseModal = () => {
-    //     this.setState({ open: false });
-    // };
-
-    // onSubmitUpdate = async (event) => {
-    //     try {
-    //         event.preventDefault();
-    //         this.setState({ open: false });
-    //         let store = this.state.store;
-    //         let id = store._id;
-    //         this.props.updateStore(id, store);
-    //         //console.log(this.props.stores);
-    //         // delete product._id;
-    //         // console.log(product);
-    //         // await Axios.put('/admin/products/' + id, { ...product });
-    //         this.handleNotification('tr', 'success', 'Successfully edited store');
-    //     } catch (error) {
-    //         this.handleNotification('tr', 'error', 'Something went wrong');
-    //     }
-
-    // };
 
 
-    // handleChange = (event) => {
-    //     let store = this.state.store
-    //     store[event.target.name] = event.target.value
-    //     this.setState({
-    //         store
-    //     });
+    onOpenAddtModal = () => {
 
-    // }
+        let button =
+            <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitAdd}>
+                Add
+            </Button>;
+
+        this.setState({
+            store: {
+                payment_method: {}
+            },
+            open: true,
+            modalButton: button
+        })
+
+    };
+
+    onSubmitAdd = async (event) => {
+        try {
+            event.preventDefault();
+            this.setState({ open: false });
+            let product = this.state.product;
+            product.date_added = new Date();
+            product.quantity = parseInt(product.quantity);
+            product.barcode = parseInt(product.barcode);
+            console.log(product);
+            let res = await Axios.post('/admin/products', { ...product });
+
+            this.props.addProduct(res.data);
+            this.handleNotification('tr', 'success', 'Successfully added product');
+
+        } catch (error) {
+            console.log(error);
+            this.handleNotification('tr', 'error', "Validation went wrong");
+        }
+
+    };
+
+    onCloseModal = () => {
+        this.setState({ open: false });
+    };
+
+    onSubmitUpdate = async (event) => {
+        try {
+            event.preventDefault();
+            this.props.updateStore(this.state.store._id, this.state.store);
+            this.setState({ open: false });
+            let id = this.state.store._id;
+            console.log(id);
+            delete this.state.store._id;
+            let res = await Axios.put('/admin/stores/' + id, { ...this.state.store });
+            let updatedStore = res.data;
+            this.props.updateStore(id, updatedStore);
+            console.log(updatedStore);
+            this.handleNotification('tr', 'success', 'Successfully edited store');
+        } catch (error) {
+            this.handleNotification('tr', 'error', 'Something went wrong');
+        }
+
+    };
+
 
     handleChange = (event) => {
-        let product = this.state.product
-        product[event.target.name] = event.target.value
+        let store = this.state.store
+        store[event.target.name] = event.target.value
         this.setState({
-            product
+            store
         });
 
     }
+
+
 
     deleteStore = async (id) => {
         try {
@@ -317,23 +228,33 @@ class StoreTable extends Component {
         }
     }
 
-    deleteProduct = async (id) => {
-        try {
-            this.props.deleteStore(id);
-            //await Axios.delete('/admin/products/' + id);
-            this.handleNotification('tr', 'success', 'Successfully deleted product');
-        } catch (error) {
-            this.handleNotification('tr', 'error', 'Something went wrong');
-        }
-    }
 
     render() {
-        console.log(this.props.products);
+        console.log(this.props.stores);
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'name',
             text: 'Name',
             sort: true
+        }, {
+            dataField: 'address',
+            text: 'Edit',
+        }, {
+            dataField: 'city',
+            text: 'City',
+        }, {
+            dataField: 'latitude',
+            text: 'Latitude',
+        }, {
+            dataField: 'longitude',
+            text: 'Longitude',
+        }, {
+            dataField: 'working_hours',
+            text: 'Working Hours',
+        }, {
+            dataField: 'payment_method',
+            text: 'Payment methods',
+            formatter: this.paymentFormatter
         }, {
             dataField: '_id',
             text: 'Edit',
@@ -343,50 +264,7 @@ class StoreTable extends Component {
             text: 'Delete',
             formatter: this.deleteFormatter
         }];
-        // const columns = [{
-        //     dataField: 'name',
-        //     text: 'Name',
-        //     sort: true
-        // }, {
-        //     dataField: 'description',
-        //     text: 'Description',
-        //     sort: true,
-        // }, {
-        //     dataField: 'category',
-        //     text: 'Category',
-        //     sort: true,
-        // }, {
-        //     dataField: 'subcategory',
-        //     text: 'Subcategory',
-        // }, {
-        //     dataField: 'producer',
-        //     text: 'Producer',
-        //     sort: true,
-        // }, {
-        //     dataField: 'barcode',
-        //     text: 'Barcode',
-        // }, {
-        //     dataField: 'image',
-        //     text: 'Image',
-        //     formatter: this.imageFormatter
-        // }, {
-        //     dataField: 'quantity',
-        //     text: 'Quantity',
-        // }, {
-        //     dataField: 'unit',
-        //     text: 'Unit',
-        // }, {
-        //     dataField: 'country_of_origin',
-        //     text: 'County',
-        // }, {
-        //     dataField: '_id',
-        //     text: 'Edit',
-        //     formatter: this.editFormatter
-        // }, {
-        //     dataField: '_id',
-        //     text: 'Delete',
-        //     formatter: this.deleteFormatter
-        // }];
+
         return (
             <div>
                 <NotificationSystem ref="notificationSystem" style={style} />
@@ -404,7 +282,7 @@ class StoreTable extends Component {
                                         type: "text",
                                         bsClass: "form-control",
                                         placeholder: "Enter store name",
-                                        value: this.state.product.name,
+                                        value: this.state.store.name,
                                         onChange: this.handleChange
 
                                     },
@@ -498,18 +376,11 @@ class StoreTable extends Component {
                     <Row>
                         <Col md={12}>
                             <Card
-                                title="202 Awesome Stroke Icons"
+                                title="Vendors"
                                 ctAllIcons
                                 category={
                                     <span>
-                                        Handcrafted by our friends from{" "}
-                                        <a
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            href="http://themes-pixeden.com/font-demos/7-stroke/index.html"
-                                        >
-                                            Pixeden
-                                        </a>
+                                        Table of vendors in the system
                                     </span>
                                 }
                                 content={
@@ -517,7 +388,7 @@ class StoreTable extends Component {
                                         <Col sm={12}>
                                             <ToolkitProvider
                                                 keyField="_id"
-                                                data={this.props.products}
+                                                data={this.props.stores}
                                                 columns={columns}
                                                 search
                                             >
@@ -553,8 +424,7 @@ class StoreTable extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        // stores: state.storeReducer.stores,
-        products: state.storeReducer.stores
+        stores: state.storeReducer.stores,
     }
 }
 

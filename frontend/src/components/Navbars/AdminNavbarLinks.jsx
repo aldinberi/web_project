@@ -71,7 +71,7 @@ class AdminNavbarLinks extends Component {
             <MenuItem divider />
             <MenuItem eventKey={2.5}>Separated link</MenuItem>
           </NavDropdown>
-          <NavItem eventKey={3} onClick={this.loginUser}>
+          <NavItem eventKey={3} href="http://localhost:3001/login">
             Log in
           </NavItem>
         </Nav>
