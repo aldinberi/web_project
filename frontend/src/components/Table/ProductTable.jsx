@@ -168,7 +168,7 @@ class ProductTable extends Component {
             delete this.state.product._id;
             let res = await Axios.put('/admin/products/' + id, { ...this.state.product });
             let updatedProduct = res.data;
-            this.props.updateProduct(id, updatedProduct);
+            // this.props.updateProduct(id, updatedProduct);
             this.handleNotification('tr', 'success', 'Successfully edited product');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');

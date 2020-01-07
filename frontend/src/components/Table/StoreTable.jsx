@@ -197,7 +197,7 @@ class StoreTable extends Component {
             delete this.state.store._id;
             let res = await Axios.put('/admin/stores/' + id, { ...this.state.store });
             let updatedStore = res.data;
-            this.props.updateStore(id, updatedStore);
+            // this.props.updateStore(id, updatedStore);
             console.log(updatedStore);
             this.handleNotification('tr', 'success', 'Successfully edited store');
         } catch (error) {
