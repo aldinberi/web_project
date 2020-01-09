@@ -257,7 +257,7 @@ module.exports = (router, db, mongojs) => {
 
 	router.delete("/stores/:id", (req, res) => {
 		let id = req.params.id;
-		db.products.remove({ _id: mongojs.ObjectId(id) }, [true], (error, docs) => {
+		db.stores.remove({ _id: mongojs.ObjectId(id) }, [true], (error, docs) => {
 			if (error) {
 				res.status(400).json({ message: `Delete failed. Reason: ${error.errmsg}` });
 			}

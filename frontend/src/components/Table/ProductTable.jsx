@@ -74,14 +74,10 @@ class ProductTable extends Component {
         );
     }
 
-    getProducts = async (indicatior = 1) => {
+    getProducts = async () => {
         let next = this.state.next;
-        if (indicatior) {
-            if (this.props.products.length === 5) {
-                next += 5;
-            }
-        } else {
-            next - 5 < 5 ? (next = 0) : (next -= 5)
+        if (this.props.products.length === 5) {
+            next += 5;
         }
         console.log(next);
         let res = await Axios.get('/products?skip=' + next);
@@ -162,13 +158,15 @@ class ProductTable extends Component {
     onSubmitUpdate = async (event) => {
         try {
             event.preventDefault();
-            this.props.updateProduct(this.state.product._id, this.state.product);
+            let product = this.state.product;
+            this.props.updateProduct(product._id, product);
             this.setState({ open: false });
-            let id = this.state.product._id;
-            delete this.state.product._id;
-            let res = await Axios.put('/admin/products/' + id, { ...this.state.product });
-            let updatedProduct = res.data;
-            // this.props.updateProduct(id, updatedProduct);
+            let id = product._id;
+            delete product._id;
+            await Axios.put('/admin/products/' + id, { ...product });
+            this.setState({
+                product: product
+            })
             this.handleNotification('tr', 'success', 'Successfully edited product');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');
@@ -421,8 +419,7 @@ class ProductTable extends Component {
                                                     )
                                                 }
                                             </ToolkitProvider>
-                                            <Button bsStyle="primary" onClick={() => { this.getProducts() }} pullRight>&gt;</Button>
-                                            <Button bsStyle="primary" onClick={() => { this.getProducts(0) }} pullRight>&lt;</Button>
+                                            <Button bsStyle="primary" onClick={() => { this.getProducts() }} pullRight>More</Button>
                                             <Button bsStyle="info" onClick={() => { this.onOpenAddtModal() }}>Add product</Button>
 
                                         </Col>

@@ -15,10 +15,9 @@ const storeReducer = (state = initState, action) => {
     }
 
     if (action.type === 'LOAD_STORES') {
-        let stores = [...state.stores, ...action.stores];
         return {
             ...state,
-            stores: stores
+            stores: action.stores
         }
     }
 

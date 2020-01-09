@@ -8,9 +8,10 @@ const initState = {
 const productReducer = (state = initState, action) => {
 
     if (action.type === 'LOAD_PRODUCTS') {
+        let products = [...state.products, ...action.products];
         return {
             ...state,
-            products: action.products
+            products: products
         }
     }
 

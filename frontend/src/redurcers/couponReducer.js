@@ -5,9 +5,10 @@ const initState = {
 
 const couponReducer = (state = initState, action) => {
     if (action.type === 'LOAD_COUPONS') {
+        let coupons = [...state.coupons, ...action.coupons];
         return {
             ...state,
-            coupons: action.coupons
+            coupons: coupons
         }
     }
 

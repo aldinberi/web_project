@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Grid, Row, Col, ControlLabel, FormGroup } from "react-bootstrap";
+import { Grid, Row, Col, ControlLabel, FormGroup, ButtonToolbar, DropdownButton, MenuItem } from "react-bootstrap";
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -12,7 +12,7 @@ import NotificationSystem from 'react-notification-system';
 import { style } from "variables/Variables.jsx";
 import Checkbox from 'components/CustomCheckbox/CustomCheckbox';
 
-class StoreTable extends Component {
+class StoreProductsTable extends Component {
 
     state = {
         credit_card: false,
@@ -99,14 +99,11 @@ class StoreTable extends Component {
 
 
 
-    getStores = async (indicatior = 1) => {
+    getStores = async () => {
         let next = this.state.next;
-        if (indicatior) {
-            if (this.props.stores.length === 5) {
-                next += 5;
-            }
-        } else {
-            next - 5 < 5 ? (next = 0) : (next -= 5)
+
+        if (this.props.stores.length === 5) {
+            next += 5;
         }
 
         let res = await Axios.get('/stores?skip=' + next);
@@ -195,15 +192,15 @@ class StoreTable extends Component {
     onSubmitUpdate = async (event) => {
         try {
             event.preventDefault();
-            let store = this.state.store;
-            this.props.updateStore(store._id, store);
+            this.props.updateStore(this.state.store._id, this.state.store);
             this.setState({ open: false });
-            let id = store._id;
-            delete store._id;
-            await Axios.put('/admin/stores/' + id, { ...store });
-            this.setState({
-                store: store
-            })
+            let id = this.state.store._id;
+            console.log(id);
+            delete this.state.store._id;
+            let res = await Axios.put('/admin/stores/' + id, { ...this.state.store });
+            let updatedStore = res.data;
+            // this.props.updateStore(id, updatedStore);
+            console.log(updatedStore);
             this.handleNotification('tr', 'success', 'Successfully edited store');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');
@@ -402,11 +399,11 @@ class StoreTable extends Component {
                     <Row>
                         <Col md={12}>
                             <Card
-                                title="Vendors"
+                                title="Stores"
                                 ctAllIcons
                                 category={
                                     <span>
-                                        Table of vendors in the system
+                                        Table of stores in the system
                                     </span>
                                 }
                                 content={
@@ -432,8 +429,10 @@ class StoreTable extends Component {
                                                     )
                                                 }
                                             </ToolkitProvider>
-                                            <Button bsStyle="primary" onClick={() => { this.getStores() }} pullRight>More</Button>
+                                            <Button bsStyle="primary" onClick={() => { this.getStores() }} pullRight>&gt;</Button>
+                                            <Button bsStyle="primary" onClick={() => { this.getStores(0) }} pullRight>&lt;</Button>
                                             <Button bsStyle="info" onClick={() => { this.onOpenAddtModal() }}>Add store</Button>
+
                                         </Col>
                                     </Row>
                                 }
@@ -465,4 +464,4 @@ const mapDispatchToProps = (dispatch) => {
 
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(StoreTable)
+export default connect(mapStateToProps, mapDispatchToProps)(StoreProductsTable)

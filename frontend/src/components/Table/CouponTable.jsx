@@ -72,16 +72,11 @@ class CouponTable extends Component {
         );
     }
 
-    getCoupons = async (indicatior = 1) => {
+    getCoupons = async () => {
         let next = this.state.next;
-        if (indicatior) {
-            if (this.props.coupons.length === 5) {
-                next += 5;
-            }
-        } else {
-            next - 5 < 5 ? (next = 0) : (next -= 5)
+        if (this.props.coupons.length === 5) {
+            next += 5;
         }
-
         let res = await Axios.get('/cupons?skip=' + next);
 
         this.setState({
@@ -414,14 +409,10 @@ class CouponTable extends Component {
                                                     )
                                                 }
                                             </ToolkitProvider>
-                                            <Button bsStyle="primary" onClick={() => { this.getCoupons() }} pullRight>&gt;</Button>
-                                            <Button bsStyle="primary" onClick={() => { this.getCoupons(0) }} pullRight>&lt;</Button>
+                                            <Button bsStyle="primary" onClick={() => { this.getCoupons() }} pullRight>More</Button>
                                             <Button bsStyle="info" onClick={() => { this.onOpenAddtModal() }}>Add coupon</Button>
 
                                         </Col>
-
-
-
                                     </Row>
                                 }
                             />
