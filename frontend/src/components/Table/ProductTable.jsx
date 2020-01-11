@@ -76,15 +76,14 @@ class ProductTable extends Component {
 
     getProducts = async () => {
         let next = this.state.next;
-        if (this.props.products.length === 5) {
-            next += 5;
-        }
-        console.log(next);
         let res = await Axios.get('/products?skip=' + next);
+        next += 5;
         this.setState({
             next: next
         });
-        this.props.loadProducts(res.data);
+        if (res.data.length !== 0) {
+            this.props.loadProducts(res.data);
+        }
     }
 
     componentDidMount = () => {

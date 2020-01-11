@@ -36,6 +36,38 @@ module.exports = (router, db, mongojs) => {
 
 	/**
 	 * @swagger
+	 * /admin/products/names:
+	 *   get:
+	 *     tags:
+	 *       - products
+	 *     name: getProductNames
+	 *     summary: Get the name and id of products in system
+	 *     security:
+	 *       - bearerAuth: []
+	 *     produces:
+	 *       - application/json
+	 *     responses:
+	 *       200:
+	 *           description: Returned the name and id of products in system
+	 *       400:
+	 *           description: Invalid user request.
+	 *       401:
+	 *           description: Unauthorized access.
+	 *       500:
+	 *           description: Something is wrong with service please contact system administrator
+	 */
+
+	router.get('/products/names', (req, res) => {
+		db.products.find({}, { name: 1 }, (error, docs) => {
+			if (error) {
+				res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
+			}
+			res.json(docs);
+		})
+	});
+
+	/**
+	 * @swagger
 	 * /admin/products/count/completed:
 	 *   get:
 	 *     tags:
@@ -109,6 +141,8 @@ module.exports = (router, db, mongojs) => {
 			res.json(docs);
 		});
 	});
+
+
 
 	/**
 	 * @swagger

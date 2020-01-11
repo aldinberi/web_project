@@ -99,21 +99,22 @@ class StoreTable extends Component {
 
 
 
-    getStores = async (indicatior = 1) => {
+    getStores = async () => {
         let next = this.state.next;
-        if (indicatior) {
-            if (this.props.stores.length === 5) {
-                next += 5;
-            }
-        } else {
-            next - 5 < 5 ? (next = 0) : (next -= 5)
-        }
+
 
         let res = await Axios.get('/stores?skip=' + next);
+
+        next += 5;
+
         this.setState({
             next: next
         });
-        this.props.loadStores(res.data);
+        console.log("Duzima");
+        console.log(res.data.length);
+        if (res.data.length !== 0) {
+            this.props.loadStores(res.data);
+        }
     }
 
 
@@ -354,7 +355,7 @@ class StoreTable extends Component {
                                 ]}
                             />
                             <FormGroup >
-                                <Col sm>
+                                <Col>
                                     <ControlLabel>Payment method</ControlLabel>
                                 </Col>
                                 <Col md={5}>
@@ -402,11 +403,11 @@ class StoreTable extends Component {
                     <Row>
                         <Col md={12}>
                             <Card
-                                title="Vendors"
+                                title="Stores"
                                 ctAllIcons
                                 category={
                                     <span>
-                                        Table of vendors in the system
+                                        Table of stores in the system
                                     </span>
                                 }
                                 content={

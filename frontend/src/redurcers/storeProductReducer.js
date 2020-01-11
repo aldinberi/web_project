@@ -1,52 +1,68 @@
 const initState = {
-    stores: [],
-
-
+    products: [],
+    storeNames: [],
+    productNames: []
 }
 
-const storeReducer = (state = initState, action) => {
+const storeProductReducer = (state = initState, action) => {
 
-    if (action.type === 'ADD_STORE') {
-        let stores = [...state.stores, action.store];
+    if (action.type === 'LOAD_STORE_NAMES') {
         return {
             ...state,
-            stores: stores
+            storeNames: action.storeNames
         }
     }
 
-    if (action.type === 'LOAD_STORES') {
+    if (action.type === 'LOAD_PRODUCT_NAMES') {
         return {
             ...state,
-            stores: action.stores
+            productNames: action.productNames
         }
     }
 
-    if (action.type === 'DELETE_STORE') {
-        let newStores = state.stores.filter(store => {
-            return store._id !== action.id
+    if (action.type === 'LOAD_STORE_PRODUCTS') {
+        let products = [...state.products, ...action.products];
+        return {
+            ...state,
+            products: products
+        }
+    }
+
+    if (action.type === 'ADD_STORE_PRODUCT') {
+        let products = [...state.products, action.product];
+        return {
+            ...state,
+            products: products
+        }
+    }
+
+    if (action.type === 'DELETE_STORE_PRODUCT') {
+        let newProducts = state.products.filter(product => {
+            return product._id !== action.id
         });
-
         return {
             ...state,
-            stores: newStores
+            products: newProducts
         }
     }
 
-    if (action.type === 'UPDATE_STORE') {
-        action.store._id = action.id;
-        let new_store = JSON.parse(JSON.stringify(action.store));
-        let newStores = state.stores.map(store => {
-            if (store._id === action.id)
-                store = new_store
-            return (store)
+    if (action.type === 'UPDATE_STORE_PRODUCT') {
+        action.product._id = action.id;
+        let new_pro = JSON.parse(JSON.stringify(action.product));
+        let newProducts = state.products.map(product => {
+            if (product._id === action.id) {
+                product = new_pro
+            }
+            return (product)
+
         });
         return {
             ...state,
-            stores: newStores
+            products: newProducts
         }
     }
 
     return state;
 }
 
-export default storeReducer
+export default storeProductReducer

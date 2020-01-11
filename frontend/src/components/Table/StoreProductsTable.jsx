@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Grid, Row, Col, ControlLabel, FormGroup, ButtonToolbar, DropdownButton, MenuItem } from "react-bootstrap";
+import { Grid, Row, Col, ControlLabel, FormGroup } from "react-bootstrap";
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -10,7 +10,7 @@ import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import Modal from 'react-responsive-modal';
 import NotificationSystem from 'react-notification-system';
 import { style } from "variables/Variables.jsx";
-import Checkbox from 'components/CustomCheckbox/CustomCheckbox';
+
 
 class StoreProductsTable extends Component {
 
@@ -20,6 +20,9 @@ class StoreProductsTable extends Component {
         next: 0,
         open: false,
         product: {},
+        single_store: "",
+        select_store: [],
+        select_product: [],
         store: {
             payment_method: {
                 cash: 0,
@@ -51,37 +54,22 @@ class StoreProductsTable extends Component {
         });
     }
 
-    imageFormatter = (cell, row) => {
-
-        return (
-            <span>
-                <a href={cell}>Image</a>
-            </span>
-
-        );
-    }
-
-
-
-    paymentFormatter = (cell, row) => {
-        let string = ""
-        if (cell.cash === 1) {
-            string += ", cash"
-        }
-        if (cell.credit_card === 1) {
-            string += ", credit card"
-        }
-        string = string.slice(2);
-        return (
-            string
-        );
-    }
 
     editFormatter = (cell, row) => {
 
         return (
             <span>
                 <Button bsStyle="info" onClick={() => { this.onOpenEditModal(cell) }}>Edit</Button>
+            </span>
+
+        );
+    }
+
+    createCouponFormatter = (cell, row) => {
+
+        return (
+            <span>
+                <Button bsStyle="success" onClick={() => { this.onOpenEditModal(cell) }}>Create coupon</Button>
             </span>
 
         );
@@ -99,44 +87,90 @@ class StoreProductsTable extends Component {
 
 
 
-    getStores = async () => {
+    getStoreProducts = async () => {
         let next = this.state.next;
 
-        if (this.props.stores.length === 5) {
-            next += 5;
-        }
+        let res = await Axios.get('/stores/products?skip=' + next);
 
-        let res = await Axios.get('/stores?skip=' + next);
+        next += 5;
+
         this.setState({
             next: next
         });
-        this.props.loadStores(res.data);
+        if (res.data.length !== 0) {
+            this.props.loadStoreProducts(res.data);
+        }
+    }
+
+    getStoresNames = async () => {
+        let res = await Axios.get('/admin/stores/names');
+        console.log(res.data);
+        const storeList = res.data.length ? (
+            res.data.map(store => {
+                return (
+                    <option value={store._id}>{store.name}</option>
+                )
+            })
+        ) : (
+                <option value="">No stores available</option>
+            )
+        let placeholder = <option value="" selected hidden>Please select a store</option>;
+        let final_list = [placeholder, ...storeList];
+        this.props.loadStoreNames(final_list);
+    }
+
+    getProductsNames = async () => {
+        let res = await Axios.get('/admin/products/names');
+        console.log(res.data);
+        const productList = res.data.length ? (
+            res.data.map(product => {
+                return (
+                    <option value={product._id}>{product.name}</option>
+                )
+            })
+        ) : (
+                <option value="">No products available</option>
+            )
+        let placeholder = <option value="" selected hidden>Please select a product</option>;
+        let final_list = [placeholder, ...productList];
+        this.props.loadProductNames(final_list);
     }
 
 
 
     componentDidMount = () => {
-        if (this.props.stores.length === 0) {
-            this.getStores();
+        if (this.props.products.length === 0) {
+            this.getStoreProducts();
         }
+        this.getStoresNames();
+        this.getProductsNames();
+
+
         this.setState({ _notificationSystem: this.refs.notificationSystem })
 
     }
 
 
     onOpenEditModal = (id) => {
-        let stores = this.props.stores;
-        let store = stores.filter(store => {
-            return store._id === id
+        let products = this.props.products;
+        let product = products.filter(product => {
+            return product._id === id
         });
         let button =
             <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitUpdate}>
                 Update
             </Button>;
 
+        let select_product = <option value={product[0].product_id}>{product[0].product_name}</option>;
+        let select_store = <option value={product[0].store_id}>{product[0].store_name}</option>;
 
+
+        console.log(product)
         this.setState({
-            store: store[0],
+
+            product: product[0],
+            select_store,
+            select_product,
             open: true,
             modalButton: button
         })
@@ -151,18 +185,13 @@ class StoreProductsTable extends Component {
             <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitAdd}>
                 Add
             </Button>;
-        let store = {
-            payment_method: {
-                cash: 0,
-                credit_card: 0
-            }
-        }
+
         this.setState({
-            store: store,
+            select_product: this.props.productNames,
+            select_store: this.props.storeNames,
             open: true,
             modalButton: button
         })
-
     };
 
     onSubmitAdd = async (event) => {
@@ -210,33 +239,13 @@ class StoreProductsTable extends Component {
 
 
     handleChange = (event) => {
-        let store = this.state.store
-        store[event.target.name] = event.target.value
+        let storeProduct = this.state.storeProduct
+        storeProduct[event.target.name] = event.target.value
         this.setState({
-            store
-        });
-
-    }
-
-    checkboxPayment = (event) => {
-        let store = this.state.store
-        if (event.target.name === "cash") {
-            if (store.payment_method.cash === 1)
-                store.payment_method.cash = 0;
-            else
-                store.payment_method.cash = 1;
-        }
-        if (event.target.name === "credit_card") {
-            if (store.payment_method.credit_card === 1)
-                store.payment_method.credit_card = 0;
-            else
-                store.payment_method.credit_card = 1;
-        }
-
-        this.setState({
-            store: store
+            storeProduct
         });
     }
+
 
     deleteStore = async (id) => {
         try {
@@ -250,39 +259,37 @@ class StoreProductsTable extends Component {
 
 
     render() {
-        console.log(this.props.stores);
+        console.log(this.props.storeNames);
+        console.log(this.props.productNames);
         const { SearchBar } = Search;
         const columns = [{
-            dataField: 'name',
-            text: 'Name',
+            dataField: 'product_name',
+            text: 'Product',
             sort: true
         }, {
-            dataField: 'address',
-            text: 'Edit',
+            dataField: 'price',
+            text: 'Price',
+            sort: true
         }, {
-            dataField: 'city',
-            text: 'City',
+            dataField: 'store_name',
+            text: 'Store name',
         }, {
-            dataField: 'latitude',
-            text: 'Latitude',
+            dataField: 'store_address',
+            text: 'Store address',
         }, {
-            dataField: 'longitude',
-            text: 'Longitude',
-        }, {
-            dataField: 'working_hours',
-            text: 'Working Hours',
-        }, {
-            dataField: 'payment_method',
-            text: 'Payment methods',
-            formatter: this.paymentFormatter
+            dataField: '_id',
+            text: 'Coupon',
+            formatter: this.createCouponFormatter
         }, {
             dataField: '_id',
             text: 'Edit',
-            formatter: this.editFormatter
+            formatter: this.editFormatter,
+
         }, {
             dataField: '_id',
             text: 'Delete',
-            formatter: this.deleteFormatter
+            formatter: this.deleteFormatter,
+
         }];
 
         return (
@@ -293,102 +300,41 @@ class StoreProductsTable extends Component {
                         <h4>Store</h4>
                         <hr />
                         <form>
-                            <FormInputs
-                                ncols={["col-md-5", "col-md-3", "col-md-4"]}
-                                properties={[
-                                    {
-                                        name: "name",
-                                        label: "Store",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter store name",
-                                        value: this.state.store.name,
-                                        onChange: this.handleChange
-
-                                    },
-                                    {
-                                        name: "address",
-                                        label: "Address",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter address",
-                                        value: this.state.store.address,
-                                        onChange: this.handleChange
-
-                                    },
-                                    {
-                                        name: "city",
-                                        label: "City",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter city",
-                                        value: this.state.store.city,
-                                        onChange: this.handleChange
-                                    }
-                                ]}
-                            />
-                            <FormInputs
-                                ncols={["col-md-6", "col-md-6"]}
-                                properties={[
-                                    {
-                                        name: "latitude",
-                                        label: "Latitude",
-                                        type: "number",
-                                        bsClass: "form-control",
-                                        placeholder: " Enter latitude",
-                                        value: this.state.store.latitude,
-                                        onChange: this.handleChange
-                                    },
-                                    {
-                                        name: "longitude",
-                                        label: "Longitude",
-                                        type: "number",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter longitude",
-                                        value: this.state.store.longitude,
-                                        onChange: this.handleChange
-                                    }
-                                ]}
-                            />
-                            <FormGroup >
-                                <Col sm>
-                                    <ControlLabel>Payment method</ControlLabel>
+                            <FormGroup>
+                                <Col>
+                                    <ControlLabel>Product</ControlLabel>
                                 </Col>
-                                <Col md={5}>
-                                    <Checkbox
-                                        name="cash"
-                                        number="1"
-                                        isChecked={this.state.store.payment_method.cash}
-                                        onClick={this.checkboxPayment}
-                                        label="Cash"
-                                    />
-                                </Col>
-                                <Col md={5}>
-                                    <Checkbox
-                                        name="credit_card"
-                                        number="2"
-                                        isChecked={this.state.store.payment_method.credit_card}
-                                        onClick={this.checkboxPayment}
-                                        label="Credit card"
-                                    />
 
+                                <Col md={6}>
+                                    <select name="store_id" className="form-control" onChange={this.handleChange}>
+                                        {this.state.select_store}
+                                    </select>
                                 </Col>
+                                <Col md={6}>
+                                    <select name="product_id" className="form-control" onChange={this.handleChange}>
+                                        {this.state.select_product}
+                                    </select>
+                                </Col>
+
                             </FormGroup>
-
-                            <FormInputs
-                                ncols={["col-md-12"]}
-                                properties={[
-                                    {
-                                        name: "working_hours",
-                                        label: "Working hours",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter working hours",
-                                        value: this.state.store.working_hours,
-                                        onChange: this.handleChange
-                                    }
-                                ]}
-                            />
+                            <FormGroup>
+                                <br />
+                                <br />
+                                <FormInputs
+                                    ncols={["col-md-12"]}
+                                    properties={[
+                                        {
+                                            name: "price",
+                                            label: "Product price",
+                                            type: "text",
+                                            bsClass: "form-control",
+                                            placeholder: "Enter product price",
+                                            value: this.state.product.price,
+                                            onChange: this.handleChange
+                                        }
+                                    ]}
+                                />
+                            </FormGroup>
                             <hr />
                             {this.state.modalButton}
                             <div className="clearfix" />
@@ -399,11 +345,11 @@ class StoreProductsTable extends Component {
                     <Row>
                         <Col md={12}>
                             <Card
-                                title="Stores"
+                                title="Products in store"
                                 ctAllIcons
                                 category={
                                     <span>
-                                        Table of stores in the system
+                                        Table of product in the system
                                     </span>
                                 }
                                 content={
@@ -411,7 +357,7 @@ class StoreProductsTable extends Component {
                                         <Col sm={12}>
                                             <ToolkitProvider
                                                 keyField="_id"
-                                                data={this.props.stores}
+                                                data={this.props.products}
                                                 columns={columns}
                                                 search
                                             >
@@ -429,9 +375,8 @@ class StoreProductsTable extends Component {
                                                     )
                                                 }
                                             </ToolkitProvider>
-                                            <Button bsStyle="primary" onClick={() => { this.getStores() }} pullRight>&gt;</Button>
-                                            <Button bsStyle="primary" onClick={() => { this.getStores(0) }} pullRight>&lt;</Button>
-                                            <Button bsStyle="info" onClick={() => { this.onOpenAddtModal() }}>Add store</Button>
+                                            <Button bsStyle="primary" onClick={() => { this.getStoreProducts() }} pullRight>More</Button>
+                                            <Button bsStyle="info" onClick={() => { this.onOpenAddtModal() }}>Add product to store</Button>
 
                                         </Col>
                                     </Row>
@@ -447,21 +392,21 @@ class StoreProductsTable extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        stores: state.storeReducer.stores,
+        products: state.storeProductReducer.products,
+        storeNames: state.storeProductReducer.storeNames,
+        productNames: state.storeProductReducer.productNames
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        loadStores: (stores) => { dispatch({ type: 'LOAD_STORES', stores: stores }) },
-        updateStore: (id, store) => { dispatch({ type: 'UPDATE_STORE', id: id, store: store }) },
-        deleteStore: (id) => { dispatch({ type: 'DELETE_STORE', id: id }) },
-        addStore: (store) => { dispatch({ type: 'ADD_STORE', store: store }) },
-        loadProducts: (products) => { dispatch({ type: 'LOAD_PRODUCTS', products: products }) },
-        deleteProduct: (id) => { dispatch({ type: 'DELETE_PRODUCT', id: id }) },
+        loadStoreProducts: (products) => { dispatch({ type: 'LOAD_STORE_PRODUCTS', products: products }) },
+        updateStoreProducts: (id, product) => { dispatch({ type: 'UPDATE_STORE_PRODUCT', id: id, product: product }) },
+        deleteStoreProduct: (id) => { dispatch({ type: 'DELETE_STORE_PRODUCT', id: id }) },
+        addStoreProduct: (product) => { dispatch({ type: 'ADD_STORE_PRODUCT', product: product }) },
+        loadStoreNames: (storeNames) => { dispatch({ type: 'LOAD_STORE_NAMES', storeNames: storeNames }) },
+        loadProductNames: (productNames) => { dispatch({ type: 'LOAD_PRODUCT_NAMES', productNames: productNames }) }
     }
 }
-
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(StoreProductsTable)
