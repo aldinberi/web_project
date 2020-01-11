@@ -109,6 +109,65 @@ module.exports = (router, db, mongojs) => {
 		);
 	});
 
+
+	/**
+	 * @swagger
+	 * /stores/products/{id}:
+	 *   get:
+	 *     tags:
+	 *       - stores
+	 *     name: stores
+	 *     summary: Get all products in stores in system
+	 *     parameters:
+	 *       - name: id
+	 *         in: path
+	 *         description: ID of the store product
+	 *         required: true
+	 *         type: string
+	 *         default: '5def93246ca8a44394d6fc88'
+	 *     produces:
+	 *       - application/json
+	 *     responses:
+	 *       200:
+	 *         description: Returned the product in the stores in system
+	 *       400:
+	 *         description: Invalid user request.
+	 *       401:
+	 *         description: Unauthorized access.
+	 *       500:
+	 *         description: Something is wrong with the service. Please contact the system administrator.
+	 */
+
+	router.get("/stores/products/:id", (req, res) => {
+
+		db.store_products.aggregate(
+			[
+				{ $match: { _id: mongojs.ObjectId(req.params.id) } },
+				{ $lookup: { from: "stores", localField: "store_id", foreignField: "_id", as: "store" } },
+				{ $lookup: { from: "products", localField: "product_id", foreignField: "_id", as: "product" } },
+				{ $unwind: "$store" },
+				{ $unwind: "$product" },
+				{
+					$project: {
+						product_name: "$product.name",
+						product_id: "$product._id",
+						price: 1,
+						store_name: "$store.name",
+						store_id: "$store._id",
+						store_address: "$store.address"
+					}
+				}
+			],
+			(error, docs) => {
+				if (error) {
+					res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
+				}
+				res.json(docs);
+			}
+		);
+	});
+
+
 	/**
 	 * @swagger
 	 * /stores/{store_id}:

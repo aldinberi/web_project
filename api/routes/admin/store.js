@@ -145,7 +145,7 @@ module.exports = (router, db, mongojs) => {
 
 	/**
 	 * @swagger
-	 * /admin/stores/{store_id}/product/{product_id}:
+	 * /admin/stores/product:
 	 *   post:
 	 *     tags:
 	 *       - stores
@@ -156,18 +156,6 @@ module.exports = (router, db, mongojs) => {
 	 *     consumes:
 	 *       - application/json
 	 *     parameters:
-	 *       - in: path
-	 *         name: store_id
-	 *         description: ID of the store
-	 *         required: true
-	 *         type: string
-	 *         default: '5de4262df71e2c88b4835871'
-	 *       - in: path
-	 *         name: product_id
-	 *         description: ID of the product
-	 *         required: true
-	 *         type: string
-	 *         default: '5def7ea44108275e78558d65'
 	 *       - in: body
 	 *         name: body
 	 *         description: Store object
@@ -185,16 +173,70 @@ module.exports = (router, db, mongojs) => {
 	 *         description: Something is wrong with the service. Please contact the system administrator.
 	 */
 
-	router.post("/stores/:store_id/product/:product_id", (req, res) => {
+	router.post("/stores/product", (req, res) => {
 		db.store_products.insert(
 			{
-				store_id: mongojs.ObjectId(req.params.store_id),
-				product_id: mongojs.ObjectId(req.params.product_id),
+				store_id: mongojs.ObjectId(req.body.store_id),
+				product_id: mongojs.ObjectId(req.body.product_id),
 				price: req.body.price
 			},
 			(error, docs) => {
 				if (error) {
 					res.status(400).json({ message: `Insert failed. Reason: ${error.errmsg}` });
+				}
+				res.json(docs);
+			}
+		);
+	});
+
+	/**
+ * @swagger
+ * /admin/stores/product/{id}:
+ *   put:
+ *     tags:
+ *       - stores
+ *     name: addStoreProduct
+ *     summary: Add a new store to the system
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the store product
+ *         required: true
+ *         type: string
+ *         default: '5def93246ca8a44394d6fc88'
+ *       - name: body
+ *         in: body
+ *         description: Store object
+ *         required: true
+ *         schema:
+ *             $ref: "#/definitions/StoreProduct"
+ *     responses:
+ *       200:
+ *         description: Returned a new store.
+ *       400:
+ *           description: Invalid user request.
+ *       401:
+ *           description: Unauthorized access.
+ *       500:
+ *         description: Something is wrong with the service. Please contact the system administrator.
+ */
+
+	router.put("/stores/product/:id", (req, res) => {
+		var id = req.params.id;
+		var object = req.body;
+		db.store_products.findAndModify(
+			{
+				query: { _id: mongojs.ObjectId(id) },
+				update: { $set: { product_id: mongojs.ObjectId(object.product_id), store_id: mongojs.ObjectId(object.store_id), price: object.price } },
+				new: true
+			},
+			(error, docs) => {
+				if (error) {
+					res.status(400).json({ message: `Update failed. Reason: ${error.errmsg}` });
 				}
 				res.json(docs);
 			}
@@ -255,6 +297,46 @@ module.exports = (router, db, mongojs) => {
 				res.json(doc);
 			}
 		);
+	});
+
+	/**
+ * @swagger
+ * /admin/stores/product/{id}:
+ *   delete:
+ *     tags:
+ *       - stores
+ *     name: deleteStoreById
+ *     summary: Delete a store from the system by its ID
+ *     security:
+ *       - bearerAuth: []
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the store product
+ *         required: true
+ *         type: string
+ *         default: '5e19e93a67f6696124f8edff'
+ *     responses:
+ *       200:
+ *         description: Successfully deletes a single store product from the system
+ *       400:
+ *           description: Invalid user request.
+ *       401:
+ *           description: Unauthorized access.
+ *       500:
+ *         description: Something is wrong with the service. Please contact the system administrator.
+ */
+
+	router.delete("/stores/product/:id", (req, res) => {
+		let id = req.params.id;
+		db.store_products.remove({ _id: mongojs.ObjectId(id) }, [true], (error, docs) => {
+			if (error) {
+				res.status(400).json({ message: `Delete failed. Reason: ${error.errmsg}` });
+			}
+			res.json(docs);
+		});
 	});
 
 	/**

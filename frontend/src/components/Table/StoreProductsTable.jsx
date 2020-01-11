@@ -79,7 +79,7 @@ class StoreProductsTable extends Component {
 
         return (
             <span>
-                <Button bsStyle="danger" onClick={() => { this.deleteStore(cell) }} fill>Delete</Button>
+                <Button bsStyle="danger" onClick={() => { this.deleteStoreProduct(cell) }} fill>Delete</Button>
             </span>
 
         );
@@ -189,6 +189,7 @@ class StoreProductsTable extends Component {
         this.setState({
             select_product: this.props.productNames,
             select_store: this.props.storeNames,
+            product: [],
             open: true,
             modalButton: button
         })
@@ -198,14 +199,14 @@ class StoreProductsTable extends Component {
         try {
             event.preventDefault();
             this.setState({ open: false });
-            let store = this.state.store;
-            store.longitude = parseFloat(store.longitude);
-            store.latitude = parseFloat(store.latitude);
-            console.log(store);
-            let res = await Axios.post('/admin/stores', { ...store });
-
-            this.props.addStore(res.data);
-            this.handleNotification('tr', 'success', 'Successfully added store');
+            let product = this.state.product;
+            product.price = parseFloat(product.price);
+            let res = await Axios.post('/admin/stores/product', { ...product });
+            let res_product = await Axios.get('/stores/products/' + res.data._id);
+            console.log('Novi');
+            console.log(res_product.data[0]);
+            this.props.addStoreProduct(res_product.data[0]);
+            this.handleNotification('tr', 'success', 'Successfully added product');
 
         } catch (error) {
             console.log(error);
@@ -221,15 +222,17 @@ class StoreProductsTable extends Component {
     onSubmitUpdate = async (event) => {
         try {
             event.preventDefault();
-            this.props.updateStore(this.state.store._id, this.state.store);
+            let product = this.state.product;
+            let id = product._id;
+            this.props.updateStoreProducts(id, product);
             this.setState({ open: false });
-            let id = this.state.store._id;
             console.log(id);
-            delete this.state.store._id;
-            let res = await Axios.put('/admin/stores/' + id, { ...this.state.store });
-            let updatedStore = res.data;
-            // this.props.updateStore(id, updatedStore);
-            console.log(updatedStore);
+            console.log()
+            delete product._id;
+            await Axios.put('/admin/stores/product/' + id, { product_id: product.product_id, store_id: product.store_id, price: parseFloat(product.price) });
+            this.setState({
+                product: product
+            })
             this.handleNotification('tr', 'success', 'Successfully edited store');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');
@@ -239,18 +242,18 @@ class StoreProductsTable extends Component {
 
 
     handleChange = (event) => {
-        let storeProduct = this.state.storeProduct
-        storeProduct[event.target.name] = event.target.value
+        let product = this.state.product
+        product[event.target.name] = event.target.value
         this.setState({
-            storeProduct
+            product
         });
     }
 
 
-    deleteStore = async (id) => {
+    deleteStoreProduct = async (id) => {
         try {
-            this.props.deleteStore(id);
-            await Axios.delete('/admin/stores/' + id);
+            this.props.deleteStoreProduct(id);
+            await Axios.delete('/admin/stores/product/' + id);
             this.handleNotification('tr', 'success', 'Successfully deleted store');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');
