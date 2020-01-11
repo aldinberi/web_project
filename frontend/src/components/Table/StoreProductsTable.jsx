@@ -19,6 +19,7 @@ class StoreProductsTable extends Component {
         cash: false,
         next: 0,
         open: false,
+        openCoupon: false,
         product: {},
         single_store: "",
         select_store: [],
@@ -69,7 +70,7 @@ class StoreProductsTable extends Component {
 
         return (
             <span>
-                <Button bsStyle="success" onClick={() => { this.onOpenEditModal(cell) }}>Create coupon</Button>
+                <Button bsStyle="success" onClick={() => { this.onOpenAddCouponModal() }}>Create coupon</Button>
             </span>
 
         );
@@ -195,6 +196,13 @@ class StoreProductsTable extends Component {
         })
     };
 
+    onOpenAddCouponModal = () => {
+
+        this.setState({
+            openCoupon: true,
+        })
+    };
+
     onSubmitAdd = async (event) => {
         try {
             event.preventDefault();
@@ -217,6 +225,10 @@ class StoreProductsTable extends Component {
 
     onCloseModal = () => {
         this.setState({ open: false });
+    };
+
+    onCloseCouponModal = () => {
+        this.setState({ openCoupon: false });
     };
 
     onSubmitUpdate = async (event) => {
@@ -340,6 +352,44 @@ class StoreProductsTable extends Component {
                             </FormGroup>
                             <hr />
                             {this.state.modalButton}
+                            <div className="clearfix" />
+                        </form>
+                    </Grid>
+                </Modal>
+                <Modal open={this.state.openCoupon} onClose={this.onCloseCouponModal} center>
+                    <Grid fluid>
+                        <h4>Cerate coupon</h4>
+                        <hr />
+                        <form>
+                            <FormInputs
+                                ncols={["col-md-12"]}
+                                properties={[
+                                    {
+                                        name: "coupon_code",
+                                        label: "Coupon code",
+                                        type: "text",
+                                        bsClass: "form-control",
+                                        placeholder: "Enter coupon code",
+                                    }
+                                ]}
+                            />
+                            <FormInputs
+                                ncols={["col-md-12"]}
+                                properties={[
+                                    {
+                                        name: "new_price",
+                                        label: "New price",
+                                        type: "number",
+                                        bsClass: "form-control",
+                                        placeholder: "Enter new price",
+                                    }
+                                ]}
+                            />
+
+                            <hr />
+                            <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitAdd}>
+                                Create
+                            </Button>
                             <div className="clearfix" />
                         </form>
                     </Grid>

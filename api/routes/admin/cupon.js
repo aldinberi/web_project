@@ -30,8 +30,7 @@ module.exports = (router, db, mongojs) => {
 	 */
 
 	router.post("/cupons", (req, res) => {
-		req.body.product_id = mongojs.ObjectId(req.body.product_id);
-		req.body.store_id = mongojs.ObjectId(req.body.store_id);
+		req.body.store_product_id = mongojs.ObjectId(req.body.store_product_id);
 		db.cupons.insert(req.body, (error, docs) => {
 			if (error) {
 				res.status(400).json({ message: `Insert failed. Reason: ${error.errmsg}` });
@@ -60,7 +59,7 @@ module.exports = (router, db, mongojs) => {
 	 *         description: ID of the cupon
 	 *         required: true
 	 *         type: string
-	 *         default: '5de3d9059c11b8c773e5809c'
+	 *         default: '5e1a2db302238a4cbc3dbb78'
 	 *       - in: body
 	 *         name: body
 	 *         description: Cupon object
@@ -80,8 +79,7 @@ module.exports = (router, db, mongojs) => {
 
 	router.put("/cupons/:id", (req, res) => {
 		let id = req.params.id;
-		req.body.product_id = mongojs.ObjectId(req.body.product_id);
-		req.body.store_id = mongojs.ObjectId(req.body.store_id);
+		req.body.store_product_id = mongojs.ObjectId(req.body.store_product_id);
 		let itemUpdate = req.body;
 		db.cupons.findAndModify(
 			{
@@ -116,7 +114,7 @@ module.exports = (router, db, mongojs) => {
 	 *         description: ID of the cupon
 	 *         required: true
 	 *         type: string
-	 *         default: '5de3d9059c11b8c773e5809c'
+	 *         default: '5e1a2db302238a4cbc3dbb78'
 	 *     responses:
 	 *       200:
 	 *         description: Successfully deleted a single cupon from the system

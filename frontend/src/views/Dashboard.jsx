@@ -137,7 +137,7 @@ class Dashboard extends Component {
 
     for (let i = 0; i < res.data.length; i++) {
       json.names.unshift(res.data[i].name);
-      let procent = (this.state.products / res.data[i].count) * 100;
+      let procent = (parseFloat(res.data[i].count) / this.state.products) * 100;
       dataPie.series.unshift(procent);
       dataPie.labels.unshift(procent + "%");
     }

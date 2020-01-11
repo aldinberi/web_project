@@ -39,8 +39,10 @@ module.exports = (router, db, mongojs) => {
 				{ $sort: { new_price: 1 } },
 				{ $limit: limit },
 				{ $skip: skip },
-				{ $lookup: { from: "stores", localField: "store_id", foreignField: "_id", as: "store" } },
-				{ $lookup: { from: "products", localField: "product_id", foreignField: "_id", as: "product" } },
+				{ $lookup: { from: "store_products", localField: "store_product_id", foreignField: "_id", as: "store_product" } },
+				{ $unwind: "$store_product" },
+				{ $lookup: { from: "stores", localField: "store_product.store_id", foreignField: "_id", as: "store" } },
+				{ $lookup: { from: "products", localField: "store_product.product_id", foreignField: "_id", as: "product" } },
 				{ $unwind: "$store" },
 				{ $unwind: "$product" },
 				{
@@ -102,7 +104,7 @@ module.exports = (router, db, mongojs) => {
 
 	/**
 	 * @swagger
-	 * /cupons/produt/{id}:
+	 * /cupons/product/{id}:
 	 *   get:
 	 *     tags:
 	 *       - cupons
@@ -128,15 +130,17 @@ module.exports = (router, db, mongojs) => {
 	 *         description: Something is wrong with the service. Please contact the system administrator.
 	 */
 
-	router.get("/cupons/produt/:id", (req, res) => {
+	router.get("/cupons/product/:id", (req, res) => {
 		let id = req.params.id;
 		db.cupons.aggregate(
 			[
-				{ $match: { product_id: mongojs.ObjectId(id) } },
+				{ $match: { store_product_id: mongojs.ObjectId(id) } },
 				{ $sort: { new_price: 1 } },
 				{ $limit: 1 },
-				{ $lookup: { from: "stores", localField: "store_id", foreignField: "_id", as: "store" } },
-				{ $lookup: { from: "products", localField: "product_id", foreignField: "_id", as: "product" } },
+				{ $lookup: { from: "store_products", localField: "store_product_id", foreignField: "_id", as: "store_product" } },
+				{ $unwind: "$store_product" },
+				{ $lookup: { from: "stores", localField: "store_product.store_id", foreignField: "_id", as: "store" } },
+				{ $lookup: { from: "products", localField: "store_product.product_id", foreignField: "_id", as: "product" } },
 				{ $unwind: "$store" },
 				{ $unwind: "$product" },
 				{
