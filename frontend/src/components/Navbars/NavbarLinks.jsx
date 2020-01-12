@@ -5,7 +5,12 @@ import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
 class NavbarLinks extends Component {
 
   render() {
-    let link = process.env.CLIENT_URL || "http://localhost:3001"
+    let link;
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+      link = "http://localhost:3001"
+    } else {
+      link = process.env.CLIENT_URL
+    }
     link = link + "/login";
     console.log(link);
     return (
