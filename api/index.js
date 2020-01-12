@@ -6,6 +6,7 @@ const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const { google } = require("googleapis");
 const cors = require("cors");
+const path = require('path');
 
 let config;
 
