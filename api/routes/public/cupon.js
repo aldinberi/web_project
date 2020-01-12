@@ -49,9 +49,10 @@ module.exports = (router, db, mongojs) => {
 					$project: {
 						product_name: "$product.name",
 						new_price: 1,
-						cupon_code: 1,
+						coupon_code: 1,
 						store_name: "$store.name",
-						store_address: "$store.address"
+						store_address: "$store.address",
+						store_product_id: 1
 					}
 				}
 			],
@@ -147,9 +148,10 @@ module.exports = (router, db, mongojs) => {
 					$project: {
 						product_name: "$product.name",
 						new_price: 1,
-						cupon_code: 1,
+						coupon_code: 1,
 						store_name: "$store.name",
-						store_address: "$store.address"
+						store_address: "$store.address",
+						store_product_id: 1
 					}
 				}
 			],

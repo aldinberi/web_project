@@ -16,8 +16,7 @@ class CouponTable extends Component {
     state = {
         next: 0,
         open: false,
-        product: {},
-        modalButton: "",
+        coupon: {},
         _notificationSystem: null
     }
 
@@ -74,15 +73,18 @@ class CouponTable extends Component {
 
     getCoupons = async () => {
         let next = this.state.next;
-        if (this.props.coupons.length === 5) {
-            next += 5;
-        }
+
         let res = await Axios.get('/cupons?skip=' + next);
+
+        next += 5;
 
         this.setState({
             next: next
         });
-        this.props.loadCoupons(res.data);
+
+        if (res.data.length !== 0) {
+            this.props.loadCoupons(res.data);
+        }
     }
 
     getStores = async () => {
@@ -104,58 +106,15 @@ class CouponTable extends Component {
     }
 
     onOpenEditModal = (id) => {
-        let products = this.props.products;
-        let product = products.filter(product => {
-            return product._id === id
+        let coupons = this.props.coupons;
+        let coupon = coupons.filter(coupon => {
+            return coupon._id === id
         });
-        let button =
-            <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitUpdate}>
-                Update
-            </Button>;
-
-
-        console.log(product);
-        this.setState({
-            product: product[0],
-            open: true,
-            modalButton: button
-        })
-
-    };
-
-    onOpenAddtModal = () => {
-
-        let button =
-            <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitAdd}>
-                Add
-            </Button>;
 
         this.setState({
-            coupon: {},
-            open: true,
-            modalButton: button
+            coupon: coupon[0],
+            open: true
         })
-
-    };
-
-    onSubmitAdd = async (event) => {
-        try {
-            event.preventDefault();
-            this.setState({ open: false });
-            let product = this.state.product;
-            product.date_added = new Date();
-            product.quantity = parseInt(product.quantity);
-            product.barcode = parseInt(product.barcode);
-            console.log(product);
-            let res = await Axios.post('/admin/products', { ...product });
-
-            this.props.addProduct(res.data);
-            this.handleNotification('tr', 'success', 'Successfully added product');
-
-        } catch (error) {
-            console.log(error);
-            this.handleNotification('tr', 'error', "Validation went wrong");
-        }
 
     };
 
@@ -166,15 +125,20 @@ class CouponTable extends Component {
     onSubmitUpdate = async (event) => {
         try {
             event.preventDefault();
+            let coupon = this.state.coupon;
+            let id = coupon._id;
+            this.props.updateCoupon(id, coupon);
             this.setState({ open: false });
-            let product = this.state.product;
-            let id = product._id;
-            this.props.updateProduct(id, product);
-            delete product._id;
-            console.log(product);
-            await Axios.put('/admin/products/' + id, { ...product });
-            this.handleNotification('tr', 'success', 'Successfully edited product');
+
+            delete coupon._id;
+
+            await Axios.put('/admin/cupons/' + id, { store_product_id: coupon.store_product_id, coupon_code: coupon.coupon_code, new_price: parseFloat(coupon.new_price) });
+            this.setState({
+                coupon
+            })
+            this.handleNotification('tr', 'success', 'Successfully edited store');
         } catch (error) {
+            console.log(error);
             this.handleNotification('tr', 'error', 'Something went wrong');
         }
 
@@ -182,28 +146,26 @@ class CouponTable extends Component {
 
 
     handleChange = (event) => {
-        let product = this.state.product
-        product[event.target.name] = event.target.value
+        let coupon = this.state.coupon
+        coupon[event.target.name] = event.target.value
         this.setState({
-            product
+            coupon
         });
-
     }
 
     deleteCoupon = async (id) => {
         try {
             this.props.deleteCoupon(id);
-            // await Axios.delete('/admin/products/' + id);
+            await Axios.delete('/admin/cupons/' + id);
             this.handleNotification('tr', 'success', 'Successfully deleted product');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');
         }
     }
 
-
     render() {
         console.log(this.props);
-        console.log(this.props.stores)
+        console.log(this.props.coupon);
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'product_name',
@@ -214,7 +176,7 @@ class CouponTable extends Component {
             text: 'New price',
             sort: true
         }, {
-            dataField: 'cupon_code',
+            dataField: 'coupon_code',
             text: 'Coupon code',
             sort: true
         }, {
@@ -238,62 +200,19 @@ class CouponTable extends Component {
                 <NotificationSystem ref="notificationSystem" style={style} />
                 <Modal open={this.state.open} onClose={this.onCloseModal} center>
                     <Grid fluid>
-                        <h4>Edit product</h4>
+                        <h4>Coupon</h4>
                         <hr />
                         <form>
                             <FormInputs
-                                ncols={["col-md-5", "col-md-3", "col-md-4"]}
+                                ncols={["col-md-12"]}
                                 properties={[
                                     {
-                                        name: "name",
-                                        label: "Product",
+                                        name: "coupon_code",
+                                        label: "Coupon code",
                                         type: "text",
                                         bsClass: "form-control",
-                                        placeholder: "Enter product name",
-                                        value: this.state.product.name,
-                                        onChange: this.handleChange
-
-                                    },
-                                    {
-                                        name: "category",
-                                        label: "Category",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter category",
-                                        value: this.state.product.category,
-                                        onChange: this.handleChange
-
-                                    },
-                                    {
-                                        name: "subcategory",
-                                        label: "Subcategory",
-                                        type: "email",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter subcategory",
-                                        value: this.state.product.subcategory,
-                                        onChange: this.handleChange
-                                    }
-                                ]}
-                            />
-                            <FormInputs
-                                ncols={["col-md-6", "col-md-6"]}
-                                properties={[
-                                    {
-                                        name: "producer",
-                                        label: "Producer",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: " Enter producer",
-                                        value: this.state.product.producer,
-                                        onChange: this.handleChange
-                                    },
-                                    {
-                                        name: "barcode",
-                                        label: "Barcode",
-                                        type: "number",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter barcode",
-                                        value: this.state.product.barcode,
+                                        placeholder: "Enter coupon code",
+                                        value: this.state.coupon.coupon_code,
                                         onChange: this.handleChange
                                     }
                                 ]}
@@ -302,68 +221,20 @@ class CouponTable extends Component {
                                 ncols={["col-md-12"]}
                                 properties={[
                                     {
-                                        name: "image",
-                                        label: "Image link",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter image link",
-                                        value: this.state.product.image,
-                                        onChange: this.handleChange
-                                    }
-                                ]}
-                            />
-                            <FormInputs
-                                ncols={["col-md-4", "col-md-4", "col-md-4"]}
-                                properties={[
-                                    {
-                                        name: "quantity",
-                                        label: "Quantity",
+                                        name: "new_price",
+                                        label: "New price",
                                         type: "number",
                                         bsClass: "form-control",
-                                        placeholder: "Enter quantity",
-                                        value: this.state.product.quantity,
-                                        onChange: this.handleChange
-                                    },
-                                    {
-                                        name: "unit",
-                                        label: "Unit",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter unit",
-                                        value: this.state.product.unit,
-                                        onChange: this.handleChange
-
-                                    },
-                                    {
-                                        name: "country_of_origin",
-                                        label: "County",
-                                        type: "text",
-                                        bsClass: "form-control",
-                                        placeholder: "Enter country name",
-                                        value: this.state.product.country_of_origin,
+                                        placeholder: "Enter new price",
+                                        value: this.state.coupon.new_price,
                                         onChange: this.handleChange
                                     }
                                 ]}
                             />
-
-                            <Row>
-                                <FormInputs
-                                    ncols={["col-md-12"]}
-                                    properties={[
-                                        {
-                                            name: "description",
-                                            label: "Description",
-                                            componentClass: "textarea",
-                                            bsClass: "form-control",
-                                            placeholder: "Enter quantity",
-                                            value: this.state.product.description,
-                                            onChange: this.handleChange
-                                        }
-                                    ]}
-                                />
-                            </Row>
                             <hr />
-                            {this.state.modalButton}
+                            <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitUpdate}>
+                                Update
+                            </Button>
                             <div className="clearfix" />
                         </form>
                     </Grid>
@@ -372,18 +243,11 @@ class CouponTable extends Component {
                     <Row>
                         <Col md={12}>
                             <Card
-                                title="202 Awesome Stroke Icons"
+                                title="Coupons"
                                 ctAllIcons
                                 category={
                                     <span>
-                                        Handcrafted by our friends from{" "}
-                                        <a
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            href="http://themes-pixeden.com/font-demos/7-stroke/index.html"
-                                        >
-                                            Pixeden
-                                        </a>
+                                        Table of coupons in the sistem
                                     </span>
                                 }
                                 content={
@@ -410,7 +274,6 @@ class CouponTable extends Component {
                                                 }
                                             </ToolkitProvider>
                                             <Button bsStyle="primary" onClick={() => { this.getCoupons() }} pullRight>More</Button>
-                                            <Button bsStyle="info" onClick={() => { this.onOpenAddtModal() }}>Add coupon</Button>
 
                                         </Col>
                                     </Row>
@@ -437,7 +300,7 @@ const mapDispatchToProps = (dispatch) => {
         addCoupon: (coupon) => { dispatch({ type: 'ADD_COUPON', coupons: coupon }) },
         loadCoupons: (coupons) => { dispatch({ type: 'LOAD_COUPONS', coupons: coupons }) },
         deleteCoupon: (id) => { dispatch({ type: 'DELETE_COUPON', id: id }) },
-        updateCoupon: (id, coupon) => { dispatch({ type: 'UPDATE_COUPON', id: id, coupons: coupon }) },
+        updateCoupon: (id, coupon) => { dispatch({ type: 'UPDATE_COUPON', id: id, coupon: coupon }) },
         loadStores: (stores) => { dispatch({ type: 'LOAD_STORES', stores: stores }) }
     }
 }

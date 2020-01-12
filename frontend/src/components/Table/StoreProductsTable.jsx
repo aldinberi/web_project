@@ -20,6 +20,7 @@ class StoreProductsTable extends Component {
         next: 0,
         open: false,
         openCoupon: false,
+        coupon: {},
         product: {},
         single_store: "",
         select_store: [],
@@ -70,7 +71,7 @@ class StoreProductsTable extends Component {
 
         return (
             <span>
-                <Button bsStyle="success" onClick={() => { this.onOpenAddCouponModal() }}>Create coupon</Button>
+                <Button bsStyle="success" onClick={() => { this.onOpenAddCouponModal(cell) }}>Create coupon</Button>
             </span>
 
         );
@@ -196,11 +197,31 @@ class StoreProductsTable extends Component {
         })
     };
 
-    onOpenAddCouponModal = () => {
-
+    onOpenAddCouponModal = (id) => {
+        let coupon = {
+            store_product_id: id
+        }
         this.setState({
             openCoupon: true,
+            coupon
         })
+    };
+
+    onSubmitAddCoupon = async (event) => {
+        try {
+            event.preventDefault();
+            this.setState({ openCoupon: false });
+            let coupon = this.state.coupon;
+            coupon.new_price = parseFloat(coupon.new_price);
+            console.log(coupon);
+            await Axios.post('/admin/cupons', { ...coupon });
+            this.handleNotification('tr', 'success', 'Successfully added coupon');
+
+        } catch (error) {
+            console.log(error);
+            this.handleNotification('tr', 'error', "Validation went wrong");
+        }
+
     };
 
     onSubmitAdd = async (event) => {
@@ -258,6 +279,14 @@ class StoreProductsTable extends Component {
         product[event.target.name] = event.target.value
         this.setState({
             product
+        });
+    }
+
+    handleCouponChange = (event) => {
+        let coupon = this.state.coupon
+        coupon[event.target.name] = event.target.value
+        this.setState({
+            coupon
         });
     }
 
@@ -370,6 +399,8 @@ class StoreProductsTable extends Component {
                                         type: "text",
                                         bsClass: "form-control",
                                         placeholder: "Enter coupon code",
+                                        value: this.state.coupon.coupon_code,
+                                        onChange: this.handleCouponChange
                                     }
                                 ]}
                             />
@@ -382,12 +413,14 @@ class StoreProductsTable extends Component {
                                         type: "number",
                                         bsClass: "form-control",
                                         placeholder: "Enter new price",
+                                        value: this.state.coupon.new_price,
+                                        onChange: this.handleCouponChange
                                     }
                                 ]}
                             />
 
                             <hr />
-                            <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitAdd}>
+                            <Button bsStyle="info" pullRight fill type="submit" onClick={this.onSubmitAddCoupon}>
                                 Create
                             </Button>
                             <div className="clearfix" />

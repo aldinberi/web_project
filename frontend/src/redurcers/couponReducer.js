@@ -32,13 +32,13 @@ const couponReducer = (state = initState, action) => {
     }
 
     if (action.type === 'UPDATE_COUPON') {
-        console.log("U reduceru " + action.coupon);
+        action.coupon._id = action.id;
+        let new_coup = JSON.parse(JSON.stringify(action.coupon));
         let newCoupons = state.coupons.map(coupon => {
             if (coupon._id === action.id)
-                coupon = action.coupon
+                coupon = new_coup
             return (coupon)
         });
-        console.log(newCoupons);
 
         return {
             ...state,

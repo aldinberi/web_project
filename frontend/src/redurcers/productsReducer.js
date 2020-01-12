@@ -43,8 +43,7 @@ const productReducer = (state = initState, action) => {
             return (product)
 
         });
-        console.log("REc");
-        console.log(newProducts);
+
         return {
             ...state,
             products: newProducts

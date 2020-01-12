@@ -17,7 +17,6 @@ const port = process.env.PORT || 3001;
 
 const db = mongojs(process.env.MONGODB_URL || config.MONGODB_URL);
 
-app.use("/", express.static("./../frontend/build"));
 app.use(bodyParser.json());
 
 app.use(cors());
@@ -38,6 +37,15 @@ app.use("/customer", customer_router);
 let public_router = express.Router();
 require("./routes/public/public.js")(public_router, db, mongojs, express, config, google, jwt);
 app.use(public_router);
+
+app.use('/', express.static('./../frontend/build'));
+app.get('/*', function (req, res) {
+	res.sendFile(path.join(__dirname, './../frontend/build/index.html'), function (err) {
+		if (err) {
+			res.status(500).send(err)
+		}
+	})
+})
 
 app.listen(port, () => {
 	console.log("Server listening on port :" + port);
