@@ -4,13 +4,17 @@ import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
 
 class NavbarLinks extends Component {
 
+  signIn = () => {
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+      window.location = "http://localhost:3001/login"
+    } else {
+      window.location = "https://gran-app-react.herokuapp.com/login"
+    }
+  }
+
   render() {
     let link;
-    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-      link = "http://localhost:3001/login"
-    } else {
-      link = "https://gran-app-react.herokuapp.com/login"
-    }
+
     console.log(link);
     return (
       <div>
@@ -28,7 +32,7 @@ class NavbarLinks extends Component {
             <MenuItem divider />
             <MenuItem eventKey={2.5}>Separated link</MenuItem>
           </NavDropdown>
-          <NavItem eventKey={3} href={link}>
+          <NavItem eventKey={3} onClick={this.signIn}>
             Log in
           </NavItem>
         </Nav>
