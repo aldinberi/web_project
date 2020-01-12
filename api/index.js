@@ -19,7 +19,7 @@ const db = mongojs(process.env.MONGODB_URL || config.MONGODB_URL);
 
 app.use(bodyParser.json());
 
-app.use(cors());
+// app.use(cors());
 
 app.use((req, res, next) => {
 	console.log("Server time: ", Date.now());
