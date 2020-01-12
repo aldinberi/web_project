@@ -7,18 +7,14 @@ class NavbarLinks extends Component {
   render() {
     let link;
     if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-      link = "http://localhost:3001"
+      link = "http://localhost:3001/login"
     } else {
-      link = "https://gran-app-react.herokuapp.com"
+      link = "https://gran-app-react.herokuapp.com/login"
     }
-    link = link + "/login";
     console.log(link);
     return (
       <div>
         <Nav pullRight>
-          <NavItem eventKey={1} href="#">
-            Account
-          </NavItem>
           <NavDropdown
             eventKey={2}
             title="My Cart"
