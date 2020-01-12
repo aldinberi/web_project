@@ -27,6 +27,14 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.use((req, res, next) => {
+	let code = req.query.code;
+	if (code != null) {
+		res.redirect(`${process.env.CLIENT_URL || config.CLIENT_URL}/login?code=${code}`);
+	}
+	next();
+});
+
 let admin_router = express.Router();
 require("./routes/admin/admin.js")(admin_router, db, mongojs, jwt, config, express, swaggerJSDoc, swaggerUi);
 app.use("/admin", admin_router);
@@ -38,6 +46,7 @@ app.use("/customer", customer_router);
 let public_router = express.Router();
 require("./routes/public/public.js")(public_router, db, mongojs, express, config, google, jwt);
 app.use(public_router);
+
 
 app.use('/', express.static('./../frontend/build'));
 app.get('/*', function (req, res) {

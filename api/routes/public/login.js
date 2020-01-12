@@ -77,6 +77,7 @@ module.exports = (router, db, mongojs, config, google, jwt) => {
 				access_type: "online",
 				scope: scopes
 			});
+			console.log(url);
 			res.redirect(url);
 		}
 	});
