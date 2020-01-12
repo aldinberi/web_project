@@ -1,7 +1,8 @@
 const initState = {
     products: [],
     storeNames: [],
-    productNames: []
+    productNames: [],
+    next: 0
 }
 
 const storeProductReducer = (state = initState, action) => {
@@ -10,6 +11,14 @@ const storeProductReducer = (state = initState, action) => {
         return {
             ...state,
             storeNames: action.storeNames
+        }
+    }
+
+    if (action.type === 'ADD_NEXT_STORE_PRODUCT') {
+        let next = state.next + action.next;
+        return {
+            ...state,
+            next: next
         }
     }
 

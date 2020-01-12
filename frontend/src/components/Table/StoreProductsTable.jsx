@@ -17,7 +17,6 @@ class StoreProductsTable extends Component {
     state = {
         credit_card: false,
         cash: false,
-        next: 0,
         open: false,
         openCoupon: false,
         coupon: {},
@@ -25,12 +24,6 @@ class StoreProductsTable extends Component {
         single_store: "",
         select_store: [],
         select_product: [],
-        store: {
-            payment_method: {
-                cash: 0,
-                credit_card: 0
-            }
-        },
         modalButton: "",
         _notificationSystem: null
     }
@@ -90,15 +83,14 @@ class StoreProductsTable extends Component {
 
 
     getStoreProducts = async () => {
-        let next = this.state.next;
+        let next = this.props.next;
 
         let res = await Axios.get('/stores/products?skip=' + next);
 
         next += 5;
 
-        this.setState({
-            next: next
-        });
+        this.props.addNextStoreProduct(next);
+
         if (res.data.length !== 0) {
             this.props.loadStoreProducts(res.data);
         }
@@ -480,7 +472,8 @@ const mapStateToProps = (state) => {
     return {
         products: state.storeProductReducer.products,
         storeNames: state.storeProductReducer.storeNames,
-        productNames: state.storeProductReducer.productNames
+        productNames: state.storeProductReducer.productNames,
+        next: state.storeProductReducer.next
     }
 }
 
@@ -491,7 +484,8 @@ const mapDispatchToProps = (dispatch) => {
         deleteStoreProduct: (id) => { dispatch({ type: 'DELETE_STORE_PRODUCT', id: id }) },
         addStoreProduct: (product) => { dispatch({ type: 'ADD_STORE_PRODUCT', product: product }) },
         loadStoreNames: (storeNames) => { dispatch({ type: 'LOAD_STORE_NAMES', storeNames: storeNames }) },
-        loadProductNames: (productNames) => { dispatch({ type: 'LOAD_PRODUCT_NAMES', productNames: productNames }) }
+        loadProductNames: (productNames) => { dispatch({ type: 'LOAD_PRODUCT_NAMES', productNames: productNames }) },
+        addNextStoreProduct: (next) => { dispatch({ type: 'ADD_NEXT_STORE_PRODUCT', next: next }) },
     }
 }
 

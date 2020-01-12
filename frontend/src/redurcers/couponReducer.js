@@ -1,5 +1,6 @@
 const initState = {
-    coupons: []
+    coupons: [],
+    next: 0
 }
 
 
@@ -17,6 +18,14 @@ const couponReducer = (state = initState, action) => {
         return {
             ...state,
             coupons: coupons
+        }
+    }
+
+    if (action.type === 'ADD_NEXT_COUPON') {
+        let next = state.next + action.next;
+        return {
+            ...state,
+            next: next
         }
     }
 

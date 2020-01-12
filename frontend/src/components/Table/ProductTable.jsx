@@ -14,7 +14,6 @@ import { style } from "variables/Variables.jsx";
 class ProductTable extends Component {
 
     state = {
-        next: 0,
         open: false,
         product: {
             id: 1
@@ -75,12 +74,12 @@ class ProductTable extends Component {
     }
 
     getProducts = async () => {
-        let next = this.state.next;
+        let next = this.props.next;
         let res = await Axios.get('/products?skip=' + next);
         next += 5;
-        this.setState({
-            next: next
-        });
+
+        this.props.addNextProduct(next);
+
         if (res.data.length !== 0) {
             this.props.loadProducts(res.data);
         }
@@ -438,7 +437,8 @@ class ProductTable extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        products: state.productReducer.products
+        products: state.productReducer.products,
+        next: state.productReducer.next,
     }
 }
 
@@ -447,7 +447,8 @@ const mapDispatchToProps = (dispatch) => {
         addProduct: (product) => { dispatch({ type: 'ADD_PRODUCT', product: product }) },
         loadProducts: (products) => { dispatch({ type: 'LOAD_PRODUCTS', products: products }) },
         deleteProduct: (id) => { dispatch({ type: 'DELETE_PRODUCT', id: id }) },
-        updateProduct: (id, product) => { dispatch({ type: 'UPDATE_PRODUCT', id: id, product: product }) }
+        updateProduct: (id, product) => { dispatch({ type: 'UPDATE_PRODUCT', id: id, product: product }) },
+        addNextProduct: (next) => { dispatch({ type: 'ADD_NEXT_PRODUCT', next: next }) },
     }
 }
 

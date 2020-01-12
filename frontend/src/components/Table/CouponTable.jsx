@@ -14,7 +14,6 @@ import { style } from "variables/Variables.jsx";
 class CouponTable extends Component {
 
     state = {
-        next: 0,
         open: false,
         coupon: {},
         _notificationSystem: null
@@ -72,15 +71,13 @@ class CouponTable extends Component {
     }
 
     getCoupons = async () => {
-        let next = this.state.next;
+        let next = this.props.next;
 
         let res = await Axios.get('/cupons?skip=' + next);
 
         next += 5;
 
-        this.setState({
-            next: next
-        });
+        this.props.addNextCoupon(next);
 
         if (res.data.length !== 0) {
             this.props.loadCoupons(res.data);
@@ -98,9 +95,6 @@ class CouponTable extends Component {
             this.getCoupons();
         }
 
-        if (this.props.stores.length === 0) {
-            this.getStores();
-        }
         this.setState({ _notificationSystem: this.refs.notificationSystem })
 
     }
@@ -289,8 +283,9 @@ class CouponTable extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        stores: state.storeReducer.stores,
         coupons: state.couponReducer.coupons,
+        next: state.couponReducer.next
+
 
     }
 }
@@ -301,7 +296,7 @@ const mapDispatchToProps = (dispatch) => {
         loadCoupons: (coupons) => { dispatch({ type: 'LOAD_COUPONS', coupons: coupons }) },
         deleteCoupon: (id) => { dispatch({ type: 'DELETE_COUPON', id: id }) },
         updateCoupon: (id, coupon) => { dispatch({ type: 'UPDATE_COUPON', id: id, coupon: coupon }) },
-        loadStores: (stores) => { dispatch({ type: 'LOAD_STORES', stores: stores }) }
+        addNextCoupon: (next) => { dispatch({ type: 'ADD_NEXT_COUPON', next: next }) },
     }
 }
 

@@ -17,7 +17,6 @@ class StoreTable extends Component {
     state = {
         credit_card: false,
         cash: false,
-        next: 0,
         open: false,
         product: {},
         store: {
