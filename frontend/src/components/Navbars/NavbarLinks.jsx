@@ -9,7 +9,7 @@ class NavbarLinks extends Component {
     if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
       link = "http://localhost:3001"
     } else {
-      link = process.env.CLIENT_URL
+      link = "https://gran-app-react.herokuapp.com"
     }
     link = link + "/login";
     console.log(link);
