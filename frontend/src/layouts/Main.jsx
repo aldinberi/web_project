@@ -129,7 +129,7 @@ class MainLayout extends Component {
           />
           <Switch>
             <Route exact path='/auth' component={Auth} />
-            {this.redirectByUser()}
+            {/* {this.redirectByUser()} */}
             {this.getRoutes(this.state.routes)}
           </Switch>
         </div>
