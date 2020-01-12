@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://localhost:3001",
   "dependencies": {
-    "bootstrap": "3.3.7",
+    "bootstrap": "3.4.1",
     "chartist": "0.10.1",
     "jwt-decode": "^2.2.0",
     "local-storage": "^2.0.0",
