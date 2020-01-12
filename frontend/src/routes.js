@@ -1,17 +1,15 @@
 
 import Dashboard from "views/Dashboard.jsx";
 import UserProfile from "views/UserProfile.jsx";
-import TableList from "views/TableList.jsx";
-import Typography from "views/Typography.jsx";
-import Icons from "views/Icons.jsx";
-import Maps from "views/Maps.jsx";
-import Notifications from "views/Notifications.jsx";
-
 import Products from "views/Products";
-
 import Coupons from "views/Coupons";
-
 import Stores from "views/Stores";
+
+import ProductsUser from "views/ProductsUser";
+import CouponsUser from "views/CouponsUser";
+import StoresUser from "views/StoresUser";
+
+
 
 const dashboardRoutes = [
   {
@@ -22,7 +20,7 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/produts",
+    path: "/products",
     name: "Products",
     icon: "pe-7s-drawer",
     component: Products,
@@ -31,14 +29,14 @@ const dashboardRoutes = [
   {
     path: "/coupons",
     name: "Coupons",
-    icon: "pe-7s-drawer",
+    icon: "pe-7s-ticket",
     component: Coupons,
     layout: "/admin"
   },
   {
     path: "/stores",
     name: "Stores",
-    icon: "pe-7s-drawer",
+    icon: "pe-7s-shopbag",
     component: Stores,
     layout: "/admin"
   },
@@ -50,41 +48,26 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/table",
-    name: "Table List",
-    icon: "pe-7s-note2",
-    component: TableList,
-    layout: "/admin"
+    path: "/products",
+    name: "Products",
+    icon: "pe-7s-drawer",
+    component: ProductsUser,
+    layout: "/public"
   },
   {
-    path: "/typography",
-    name: "Typography",
-    icon: "pe-7s-news-paper",
-    component: Typography,
-    layout: "/admin"
+    path: "/coupons",
+    name: "Coupons",
+    icon: "pe-7s-ticket",
+    component: CouponsUser,
+    layout: "/public"
   },
   {
-    path: "/icons",
-    name: "Icons",
-    icon: "pe-7s-science",
-    component: Icons,
-    layout: "/admin"
+    path: "/stores",
+    name: "Stores",
+    icon: "pe-7s-shopbag",
+    component: StoresUser,
+    layout: "/public"
   },
-  {
-    path: "/maps",
-    name: "Maps",
-    icon: "pe-7s-map-marker",
-    component: Maps,
-    layout: "/admin"
-  },
-  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: "pe-7s-bell",
-    component: Notifications,
-    layout: "/admin"
-  }
-
 ];
 
 export default dashboardRoutes;

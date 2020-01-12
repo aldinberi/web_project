@@ -56,13 +56,13 @@ module.exports = (router, db, mongojs, config, google, jwt) => {
 							let jwtToken = jwt.sign(
 								{
 									...data,
-									//exp: Math.floor(Date.now() / 1000) + 3600,
+									exp: Math.floor(Date.now() / 1000) + 3600,
 									id: doc._id,
 									type: doc.type
 								},
 								process.env.JWT_SECRET || config.JWT_SECRET
 							);
-							res.json({ jwt: jwtToken });
+							res.redirect(`${process.env.CLIENT_URL || config.CLIENT_URL}/auth#jwt=${jwtToken}`);
 						}
 					);
 				});
