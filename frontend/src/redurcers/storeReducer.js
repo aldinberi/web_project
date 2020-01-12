@@ -1,7 +1,6 @@
 const initState = {
     stores: [],
-
-
+    next: 0
 }
 
 const storeReducer = (state = initState, action) => {
@@ -11,6 +10,14 @@ const storeReducer = (state = initState, action) => {
         return {
             ...state,
             stores: stores
+        }
+    }
+
+    if (action.type === 'ADD_NEXT_STORE') {
+        let next = state.next + action.next;
+        return {
+            ...state,
+            next: next
         }
     }
 

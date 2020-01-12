@@ -100,19 +100,18 @@ class StoreTable extends Component {
 
 
     getStores = async () => {
-        let next = this.state.next;
 
+        let next = this.props.next;
 
         let res = await Axios.get('/stores?skip=' + next);
 
         next += 5;
 
-        this.setState({
-            next
-        });
+        this.props.addNextStore(next)
+
         console.log("Duzima");
         console.log(res.data.length);
-        if (res.data.length !== 0) {
+        if (res.data.length !== 0 && res.data.length !== null) {
             this.props.loadStores(res.data);
         }
     }
@@ -450,6 +449,7 @@ class StoreTable extends Component {
 const mapStateToProps = (state) => {
     return {
         stores: state.storeReducer.stores,
+        next: state.storeReducer.next
     }
 }
 
@@ -459,6 +459,7 @@ const mapDispatchToProps = (dispatch) => {
         updateStore: (id, store) => { dispatch({ type: 'UPDATE_STORE', id: id, store: store }) },
         deleteStore: (id) => { dispatch({ type: 'DELETE_STORE', id: id }) },
         addStore: (store) => { dispatch({ type: 'ADD_STORE', store: store }) },
+        addNextStore: (next) => { dispatch({ type: 'ADD_NEXT_STORE', next: next }) },
         loadProducts: (products) => { dispatch({ type: 'LOAD_PRODUCTS', products: products }) },
         deleteProduct: (id) => { dispatch({ type: 'DELETE_PRODUCT', id: id }) },
     }
