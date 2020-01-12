@@ -108,7 +108,7 @@ class StoreTable extends Component {
         next += 5;
 
         this.setState({
-            next: next
+            next
         });
         console.log("Duzima");
         console.log(res.data.length);
