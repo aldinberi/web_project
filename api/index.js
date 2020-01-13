@@ -27,12 +27,13 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.get('/', (req, res) => {
-	let code = req.query.code;
-	if (code != null) {
-		res.redirect(`${process.env.CLIENT_URL || config.CLIENT_URL}/login?code=${code}`);
-	}
-});
+// app.use('/', (req, res, next) => {
+// 	let code = req.query.code;
+// 	if (code != null) {
+// 		res.redirect(`${process.env.CLIENT_URL || config.CLIENT_URL}/login?code=${code}`);
+// 	}
+// 	next();
+// });
 
 let admin_router = express.Router();
 require("./routes/admin/admin.js")(admin_router, db, mongojs, jwt, config, express, swaggerJSDoc, swaggerUi);

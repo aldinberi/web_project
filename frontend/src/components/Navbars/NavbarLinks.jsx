@@ -32,7 +32,7 @@ class NavbarLinks extends Component {
             <MenuItem divider />
             <MenuItem eventKey={2.5}>Separated link</MenuItem>
           </NavDropdown>
-          <NavItem eventKey={3} onClick={this.signIn}>
+          <NavItem eventKey={3} href="https://gran-app-react.herokuapp.com/login">
             Log in
           </NavItem>
         </Nav>
