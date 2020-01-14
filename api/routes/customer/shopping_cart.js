@@ -45,7 +45,7 @@ module.exports = (router, db, mongojs) => {
 		let skip = Number(req.query.skip) || 0;
 		db.shopping_carts.aggregate(
 			[
-				{ $match: { user_id: mongojs.ObjectId(user_id) } },
+				{ $match: { user_id: mongojs.ObjectId(user_id), status: 0 } },
 				{ $limit: limit },
 				{ $skip: skip },
 				{
@@ -64,9 +64,12 @@ module.exports = (router, db, mongojs) => {
 				{
 					$project: {
 						product_name: "$product.name",
-						price: "$store_products.price",
+						price: 1,
+						quantity: 1,
 						store_name: "$store.name",
-						store_address: "$store.address"
+						store_address: "$store.address",
+						store_products_id: 1,
+						product_info: "$product"
 					}
 				}
 			],
@@ -111,22 +114,12 @@ module.exports = (router, db, mongojs) => {
 
 	router.get("/carts/price/:user_id", (req, res) => {
 		let user_id = req.params.user_id;
-		db.shopping_carts.aggregate(
-			[
-				{ $match: { user_id: mongojs.ObjectId(user_id) } },
-				{ $group: { _id: "$store_products_id", totaly_qunatity: { $sum: "$quantity" } } },
-				{
-					$lookup: {
-						from: "store_products",
-						localField: "_id",
-						foreignField: "_id",
-						as: "store_products"
-					}
-				},
-				{ $unwind: "$store_products" },
-				{ $project: { total: { $multiply: ["$store_products.price", "$totaly_qunatity"] } } },
-				{ $group: { _id: null, totaly_qunatity: { $sum: "$total" } } }
-			],
+		db.shopping_carts.aggregate([
+
+			{ $match: { user_id: mongojs.ObjectId(user_id), status: 0 } },
+			{ $project: { total: { $multiply: ["$price", "$quantity"] } } },
+			{ $group: { _id: null, total_price: { $sum: "$total" } } }
+		],
 			(error, docs) => {
 				if (error) {
 					res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
@@ -226,6 +219,50 @@ module.exports = (router, db, mongojs) => {
 				update: { $set: itemUpdate },
 				new: true
 			},
+			(error, docs) => {
+				if (error) {
+					res.status(400).json({ message: `Update failed. Reason: ${error.errmsg}` });
+				}
+				res.json(docs);
+			}
+		);
+	});
+
+	/**
+ * @swagger
+ * /customer/carts/order/{user_id}:
+ *   put:
+ *     tags:
+ *       - shopping_cart
+ *     name: updateShoppingCart
+ *     summary: Update item in shopping cart
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         description: ID of the shopping cart item
+ *         required: true
+ *         type: string
+ *         default: '5e065bed1088c7e56776862a'
+ *     responses:
+ *       200:
+ *         description: Updated status of order.
+ *       400:
+ *         description: Invalid user request.
+ *       401:
+ *           description: Unauthorized access.
+ *       500:
+ *         description: Something is wrong with the service. Please contact the system administrator.
+ */
+
+	router.put("/carts/order/:user_id", (req, res) => {
+		let user_id = req.params.user_id;
+		db.shopping_carts.update({ user_id: mongojs.ObjectId(user_id) }, { $set: { status: 1 } }, { multi: true },
 			(error, docs) => {
 				if (error) {
 					res.status(400).json({ message: `Update failed. Reason: ${error.errmsg}` });

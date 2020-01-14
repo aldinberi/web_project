@@ -1,7 +1,7 @@
 
 import React, { Component } from "react";
 
-import CouponTable from "components/Table/CouponTable.jsx"
+import UserCartTable from "components/Table/UserCartTable"
 
 class UserCart extends Component {
 
@@ -10,7 +10,7 @@ class UserCart extends Component {
 
         return (
             <div className="content">
-                <CouponTable />
+                <UserCartTable />
             </div>
         );
     }
