@@ -96,7 +96,8 @@ module.exports = (router, db, mongojs) => {
 						price: 1,
 						store_name: "$store.name",
 						store_id: "$store._id",
-						store_address: "$store.address"
+						store_address: "$store.address",
+						product_info: "$product"
 					}
 				}
 			],
@@ -154,7 +155,9 @@ module.exports = (router, db, mongojs) => {
 						price: 1,
 						store_name: "$store.name",
 						store_id: "$store._id",
-						store_address: "$store.address"
+						store_address: "$store.address",
+						product_info: "$product"
+
 					}
 				}
 			],

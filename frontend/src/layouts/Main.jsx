@@ -6,6 +6,8 @@ import { style } from "variables/Variables.jsx";
 import MainNavbar from "components/Navbars/MainNavbar";
 import Sidebar from "components/Sidebar/Sidebar";
 
+import { connect } from 'react-redux';
+
 import Auth from "components/Login/Auth";
 
 import routes from "routes.js";
@@ -16,6 +18,7 @@ import jwt_decode from "jwt-decode";
 
 class MainLayout extends Component {
   constructor(props) {
+    console.log('Meow contrcuctor')
     super(props);
     this.state = {
       _notificationSystem: null,
@@ -49,9 +52,9 @@ class MainLayout extends Component {
     });
   }
 
-  getRoutes = routes => {
+  getRoutes = () => {
+    let routes = this.props.routes;
     let finalRoutes;
-
     finalRoutes = routes.map((prop, key) => {
       return (
         <Route
@@ -66,8 +69,6 @@ class MainLayout extends Component {
       );
     });
 
-    console.log(finalRoutes);
-
     return (finalRoutes);
 
   };
@@ -76,12 +77,11 @@ class MainLayout extends Component {
     if (this.state.user != null) {
       if (this.state.user.type === "admin") {
         return <Redirect exact from="/" to="/admin/dashboard" />;
+      } else {
+        return <Redirect exact from="/" to="/public/products" />;
       }
-    } else {
-      return <Redirect exact from="/" to="/public/products" />;
     }
   }
-
 
   componentDidMount() {
     let filteredRoutes;
@@ -93,12 +93,14 @@ class MainLayout extends Component {
 
     }
 
-    console.log(decoded);
-
     if (decoded != null) {
       if (decoded.type === "admin") {
         filteredRoutes = routes.filter(route => {
           return route.layout === "/admin"
+        });
+      } else if (decoded.type === "customer") {
+        filteredRoutes = routes.filter(route => {
+          return route.layout === "/public" || route.layout === "/customer"
         });
       }
 
@@ -108,19 +110,20 @@ class MainLayout extends Component {
       });
     }
 
+
+    this.props.addRoutes(filteredRoutes);
+
     this.setState({
-      routes: filteredRoutes,
       user: decoded
     })
 
   }
-  componentDidUpdate(e) {
-  }
+
   render() {
     return (
       <div className="wrapper">
         <NotificationSystem ref="notificationSystem" style={style} />
-        <Sidebar {...this.props} routes={this.state.routes} image={this.state.image}
+        <Sidebar {...this.props} routes={this.props.routes} image={this.state.image}
           color={this.state.color}
           hasImage={this.state.hasImage} />
         <div id="main-panel" className="main-panel" ref="mainPanel">
@@ -130,7 +133,7 @@ class MainLayout extends Component {
           <Switch>
             <Route exact path='/auth' component={Auth} />
             {this.redirectByUser()}
-            {this.getRoutes(this.state.routes)}
+            {this.getRoutes()}
           </Switch>
         </div>
       </div>
@@ -138,4 +141,16 @@ class MainLayout extends Component {
   }
 }
 
-export default MainLayout;
+const mapStateToProps = (state) => {
+  return {
+    routes: state.userReducer.routes
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addRoutes: (routes) => { dispatch({ type: 'ADD_ROUTES', routes: routes }) },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);

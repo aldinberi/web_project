@@ -126,7 +126,7 @@ class CouponTable extends Component {
 
             delete coupon._id;
 
-            await Axios.put('/admin/cupons/' + id, { store_product_id: coupon.store_product_id, coupon_code: coupon.coupon_code, new_price: parseFloat(coupon.new_price) });
+            await Axios.put('/admin/cupons/' + id, { store_product_id: coupon.store_product_id, coupon_code: coupon.coupon_code, new_price: parseFloat(coupon.new_price) }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             this.setState({
                 coupon
             })
@@ -150,7 +150,7 @@ class CouponTable extends Component {
     deleteCoupon = async (id) => {
         try {
             this.props.deleteCoupon(id);
-            await Axios.delete('/admin/cupons/' + id);
+            await Axios.delete('/admin/cupons/' + id, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             this.handleNotification('tr', 'success', 'Successfully deleted product');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');

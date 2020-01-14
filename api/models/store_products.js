@@ -14,8 +14,12 @@
  *    store_id:
  *     type: string
  *     example: 5def7ea44108275e78558d65
+ *    status:
+ *     type: int
+ *     example: 0
  *    required:
  *     - price
  *     - product_id
  *     - store_id
+ *     - status
  */

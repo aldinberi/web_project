@@ -9,6 +9,8 @@ import ProductsUser from "views/ProductsUser";
 import CouponsUser from "views/CouponsUser";
 import StoresUser from "views/StoresUser";
 
+import UserCart from "views/UserCart";
+
 
 
 const dashboardRoutes = [
@@ -67,6 +69,13 @@ const dashboardRoutes = [
     icon: "pe-7s-shopbag",
     component: StoresUser,
     layout: "/public"
+  },
+  {
+    path: "/cart",
+    name: "Cart",
+    icon: "pe-7s-cart",
+    component: UserCart,
+    layout: "/customer"
   },
 ];
 

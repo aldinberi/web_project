@@ -13,8 +13,18 @@
  *    quantity:
  *     type: integer
  *     example: 1
+ *    status:
+ *     type: integer
+ *     example: 0
+ *    price:
+ *     type: number
+ *     format: double
+ *     example: 1.23
  *    required:
  *     - store_products_id
  *     - user_id
+ *     - price
  *     - quantity
+ *     - status
+ *
  */

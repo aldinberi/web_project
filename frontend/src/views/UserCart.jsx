@@ -1,19 +1,19 @@
 
 import React, { Component } from "react";
 
-import CouponTableUser from "components/Table/CouponTableUser.jsx"
+import CouponTable from "components/Table/CouponTable.jsx"
 
-class CouponsUser extends Component {
+class UserCart extends Component {
 
     render() {
         console.log(this.props);
 
         return (
             <div className="content">
-                <CouponTableUser />
+                <CouponTable />
             </div>
         );
     }
 }
 
-export default CouponsUser;
+export default UserCart;

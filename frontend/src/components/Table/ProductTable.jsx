@@ -137,7 +137,7 @@ class ProductTable extends Component {
             product.quantity = parseInt(product.quantity);
             product.barcode = parseInt(product.barcode);
             console.log(product);
-            let res = await Axios.post('/admin/products', { ...product });
+            let res = await Axios.post('/admin/products', { ...product }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
 
             this.props.addProduct(res.data);
             this.handleNotification('tr', 'success', 'Successfully added product');
@@ -161,7 +161,7 @@ class ProductTable extends Component {
             this.setState({ open: false });
             let id = product._id;
             delete product._id;
-            await Axios.put('/admin/products/' + id, { ...product });
+            await Axios.put('/admin/products/' + id, { ...product }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             this.setState({
                 product: product
             })
@@ -185,7 +185,7 @@ class ProductTable extends Component {
     deleteProduct = async (id) => {
         try {
             this.props.deleteProduct(id);
-            await Axios.delete('/admin/products/' + id);
+            await Axios.delete('/admin/products/' + id, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             this.handleNotification('tr', 'success', 'Successfully deleted product');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');

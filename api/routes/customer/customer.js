@@ -25,4 +25,8 @@ module.exports = (router, db, mongojs, jwt, config, express) => {
 	let shopping_cart_router = express.Router();
 	require("./shopping_cart.js")(shopping_cart_router, db, mongojs);
 	router.use(shopping_cart_router);
+
+	let coupon_router = express.Router();
+	require("./coupon.js")(coupon_router, db, mongojs);
+	router.use(coupon_router);
 };

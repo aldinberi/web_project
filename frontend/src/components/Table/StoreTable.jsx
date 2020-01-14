@@ -175,7 +175,7 @@ class StoreTable extends Component {
             store.longitude = parseFloat(store.longitude);
             store.latitude = parseFloat(store.latitude);
             console.log(store);
-            let res = await Axios.post('/admin/stores', { ...store });
+            let res = await Axios.post('/admin/stores', { ...store }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
 
             this.props.addStore(res.data);
             this.handleNotification('tr', 'success', 'Successfully added store');
@@ -199,7 +199,7 @@ class StoreTable extends Component {
             this.setState({ open: false });
             let id = store._id;
             delete store._id;
-            await Axios.put('/admin/stores/' + id, { ...store });
+            await Axios.put('/admin/stores/' + id, { ...store }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             this.setState({
                 store: store
             })
@@ -243,7 +243,7 @@ class StoreTable extends Component {
     deleteStore = async (id) => {
         try {
             this.props.deleteStore(id);
-            await Axios.delete('/admin/stores/' + id);
+            await Axios.delete('/admin/stores/' + id, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             this.handleNotification('tr', 'success', 'Successfully deleted store');
         } catch (error) {
             this.handleNotification('tr', 'error', 'Something went wrong');

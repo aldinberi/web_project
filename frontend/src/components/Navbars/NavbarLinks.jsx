@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { NavItem, Nav, NavDropdown, MenuItem } from "react-bootstrap";
-
+import { NavItem, Nav } from "react-bootstrap";
+import { hasValidJwt } from "../../utils/jwtValidator"
 
 class NavbarLinks extends Component {
 
@@ -12,29 +12,21 @@ class NavbarLinks extends Component {
     }
   }
 
-  render() {
-    let link;
+  logout = () => {
+    localStorage.removeItem('jwtToken');
+    window.location = '/public/products';
+  }
 
-    console.log(link);
+  render() {
+
     return (
       <div>
         <Nav pullRight>
-          <NavDropdown
-            eventKey={2}
-            title="My Cart"
-            id="basic-nav-dropdown-right"
-          >
-            <MenuItem eventKey={2.1}>Action</MenuItem>
-            <MenuItem eventKey={2.2}>Another action</MenuItem>
-            <MenuItem eventKey={2.3}>Something</MenuItem>
-            <MenuItem eventKey={2.4}>Another action</MenuItem>
-            <MenuItem eventKey={2.5}>Something</MenuItem>
-            <MenuItem divider />
-            <MenuItem eventKey={2.5}>Separated link</MenuItem>
-          </NavDropdown>
-          <NavItem eventKey={3} href="https://gran-app-react.herokuapp.com/login">
-            Log in
+          <NavItem eventKey={2}>
+            My Cart
           </NavItem>
+          {hasValidJwt() && <NavItem eventKey={3} onClick={this.logout}> Log out </NavItem>}
+          {!hasValidJwt() && <NavItem eventKey={3} onClick={this.signIn}>Log in</NavItem>}
         </Nav>
       </div>
     );

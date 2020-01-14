@@ -1,14 +1,14 @@
 
 import React, { Component } from "react";
 
-import StoreTable from "components/Table/StoreTable.jsx"
+import StoreTableUser from "components/Table/StoreTableUser.jsx"
 
 class StoresUser extends Component {
 
     render() {
         return (
             <div className="content">
-                <StoreTable />
+                <StoreTableUser />
             </div>
         );
     }
