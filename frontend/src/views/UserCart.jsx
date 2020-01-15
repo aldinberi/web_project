@@ -1,16 +1,18 @@
 
 import React, { Component } from "react";
 
-import UserCartTable from "components/Table/UserCartTable"
+import UserCartTable from "components/Table/UserCartTable";
+
+import OrderHistoryTable from "components/Table/OrderHistoryTable";
 
 class UserCart extends Component {
 
     render() {
-        console.log(this.props);
 
         return (
             <div className="content">
                 <UserCartTable />
+                <OrderHistoryTable />
             </div>
         );
     }

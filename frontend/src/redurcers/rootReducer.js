@@ -5,6 +5,7 @@ import storeProductReducer from './storeProductReducer'
 import userCartReducer from './userCartReducer'
 import userReducer from './userReducer';
 import productReducer from './productsReducer';
+import userCartHistoryReducer from './userCartHistoryReducer';
 
 export default combineReducers({
     couponReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
     userCartReducer,
     userReducer,
     productReducer,
-    storeProductReducer
+    storeProductReducer,
+    userCartHistoryReducer
 })

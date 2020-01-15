@@ -22,9 +22,6 @@ class NavbarLinks extends Component {
     return (
       <div>
         <Nav pullRight>
-          <NavItem eventKey={2}>
-            My Cart
-          </NavItem>
           {hasValidJwt() && <NavItem eventKey={3} onClick={this.logout}> Log out </NavItem>}
           {!hasValidJwt() && <NavItem eventKey={3} onClick={this.signIn}>Log in</NavItem>}
         </Nav>

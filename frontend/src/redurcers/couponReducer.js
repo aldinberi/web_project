@@ -30,7 +30,6 @@ const couponReducer = (state = initState, action) => {
     }
 
     if (action.type === 'DELETE_COUPON') {
-        console.log(action.id);
         let newCoupons = state.coupons.filter(coupon => {
             return coupon._id !== action.id
         });

@@ -46,8 +46,91 @@ module.exports = (router, db, mongojs) => {
 		db.shopping_carts.aggregate(
 			[
 				{ $match: { user_id: mongojs.ObjectId(user_id), status: 0 } },
-				{ $limit: limit },
 				{ $skip: skip },
+				{ $limit: limit },
+				{
+					$lookup: {
+						from: "store_products",
+						localField: "store_products_id",
+						foreignField: "_id",
+						as: "store_products"
+					}
+				},
+				{ $unwind: "$store_products" },
+				{ $lookup: { from: "products", localField: "store_products.product_id", foreignField: "_id", as: "product" } },
+				{ $unwind: "$product" },
+				{ $lookup: { from: "stores", localField: "store_products.store_id", foreignField: "_id", as: "store" } },
+				{ $unwind: "$store" },
+				{
+					$project: {
+						product_name: "$product.name",
+						price: 1,
+						quantity: 1,
+						store_name: "$store.name",
+						store_address: "$store.address",
+						store_products_id: 1,
+						product_info: "$product"
+					}
+				}
+			],
+			(error, docs) => {
+				if (error) {
+					res.status(400).json({ message: `Retrieving data failed. Reason: ${error.errmsg}` });
+				}
+				res.json(docs);
+			}
+		);
+	});
+
+	/**
+ * @swagger
+ * /customer/carts/completed/{user_id}:
+ *   get:
+ *     tags:
+ *       - shopping_cart
+ *     name: getShoppingCart
+ *     summary: Get users cart in system
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         description: ID of the user
+ *         required: true
+ *         type: string
+ *         default: '5dc707a2719a52f7ad39a818'
+ *       - name: offset
+ *         in: query
+ *         description: The offset of the shopping cart list.
+ *         type: integer
+ *         default: 0
+ *       - name: limit
+ *         in: query
+ *         description: The limit of the shopping cart list.
+ *         type: integer
+ *         default: 5
+ *     security:
+ *       - bearerAuth: []
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Returend list of orderd products
+ *       400:
+ *           description: Invalid user request.
+ *       401:
+ *           description: Unauthorized access.
+ *       500:
+ *         description: Something is wrong with service please contact system administrator
+ */
+
+	router.get("/carts/completed/:user_id", (req, res) => {
+		let user_id = req.params.user_id;
+		let limit = Number(req.query.limit) || 5;
+		let skip = Number(req.query.skip) || 0;
+		db.shopping_carts.aggregate(
+			[
+				{ $match: { user_id: mongojs.ObjectId(user_id), status: 1 } },
+				{ $skip: skip },
+				{ $limit: limit },
 				{
 					$lookup: {
 						from: "store_products",

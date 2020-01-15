@@ -18,7 +18,6 @@ import jwt_decode from "jwt-decode";
 
 class MainLayout extends Component {
   constructor(props) {
-    console.log('Meow contrcuctor')
     super(props);
     this.state = {
       _notificationSystem: null,

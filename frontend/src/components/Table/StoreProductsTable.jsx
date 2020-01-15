@@ -98,7 +98,6 @@ class StoreProductsTable extends Component {
 
     getStoresNames = async () => {
         let res = await Axios.get('/admin/stores/names', { headers: { Authorization: localStorage.getItem('jwtToken') } });
-        console.log(res.data);
         const storeList = res.data.length ? (
             res.data.map(store => {
                 return (
@@ -115,7 +114,6 @@ class StoreProductsTable extends Component {
 
     getProductsNames = async () => {
         let res = await Axios.get('/admin/products/names', { headers: { Authorization: localStorage.getItem('jwtToken') } });
-        console.log(res.data);
         const productList = res.data.length ? (
             res.data.map(product => {
                 return (
@@ -159,7 +157,6 @@ class StoreProductsTable extends Component {
         let select_store = <option value={product[0].store_id}>{product[0].store_name}</option>;
 
 
-        console.log(product)
         this.setState({
 
             product: product[0],
@@ -205,7 +202,6 @@ class StoreProductsTable extends Component {
             this.setState({ openCoupon: false });
             let coupon = this.state.coupon;
             coupon.new_price = parseFloat(coupon.new_price);
-            console.log(coupon);
             await Axios.post('/admin/cupons', { ...coupon }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             this.handleNotification('tr', 'success', 'Successfully added coupon');
 
@@ -224,8 +220,6 @@ class StoreProductsTable extends Component {
             product.price = parseFloat(product.price);
             let res = await Axios.post('/admin/stores/product', { ...product }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             let res_product = await Axios.get('/stores/products/' + res.data._id);
-            console.log('Novi');
-            console.log(res_product.data[0]);
             this.props.addStoreProduct(res_product.data[0]);
             this.handleNotification('tr', 'success', 'Successfully added product');
 
@@ -251,8 +245,6 @@ class StoreProductsTable extends Component {
             let id = product._id;
             this.props.updateStoreProducts(id, product);
             this.setState({ open: false });
-            console.log(id);
-            console.log()
             delete product._id;
             await Axios.put('/admin/stores/product/' + id, { product_id: product.product_id, store_id: product.store_id, price: parseFloat(product.price) }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
             this.setState({
@@ -295,8 +287,6 @@ class StoreProductsTable extends Component {
 
 
     render() {
-        console.log(this.props.storeNames);
-        console.log(this.props.productNames);
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'product_name',

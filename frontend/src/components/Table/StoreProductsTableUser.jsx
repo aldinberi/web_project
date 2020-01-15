@@ -116,7 +116,7 @@ class StoreProductsTableUser extends Component {
             return product._id === id
         });
 
-        console.log(product[0]);
+
 
 
         this.setState({
@@ -137,11 +137,10 @@ class StoreProductsTableUser extends Component {
             this.handleNotification('tr', 'error', "Unable to add product to cart, you must be loged in for this operation");
         }
 
-        console.log(res.data);
+
 
         for (let i = 0; i < res.data.length; i++) {
             if (res.data[i].coupon_code === coupon_code) {
-                console.log("Found something");
                 product.price = res.data[i].new_price;
                 found = true;
             }
@@ -191,9 +190,6 @@ class StoreProductsTableUser extends Component {
 
 
     render() {
-        console.log(this.state.product);
-        console.log(this.state.quantity);
-        console.log(this.state.user);
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'product_name',

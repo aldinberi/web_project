@@ -158,8 +158,7 @@ class CouponTable extends Component {
     }
 
     render() {
-        console.log(this.props);
-        console.log(this.props.coupon);
+
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'product_name',

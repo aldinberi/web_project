@@ -11,7 +11,7 @@ import { style } from "variables/Variables.jsx";
 import { Modal } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 
-class UserCartTable extends Component {
+class OrderHistoryTable extends Component {
 
     state = {
         open: false,
@@ -56,52 +56,12 @@ class UserCartTable extends Component {
         );
     }
 
-    removeFormatter = (cell, row) => {
-
-        return (
-            <span>
-                <Button bsStyle="danger" onClick={() => { this.deleteCartProduct(cell) }} fill>Remove</Button>
-            </span>
-
-        );
-    }
-
-    deleteCartProduct = async (id) => {
-        try {
-            this.props.deleteCartProduct(id);
-            await Axios.delete('/customer/carts/' + id, { headers: { Authorization: localStorage.getItem('jwtToken') } });
-            this.handleNotification('tr', 'success', 'Successfully removed product');
-            this.setState({ open: false });
-        } catch (error) {
-            this.handleNotification('tr', 'error', 'Something went wrong');
-        }
-    }
-
-    getTotalPrice = async () => {
-        let user = this.state.user;
-        let res = await Axios.get('/customer/carts/price/' + user.id, { headers: { Authorization: localStorage.getItem('jwtToken') } });
-
-        if (res.data[0] != null) {
-            this.props.updateTotalPrice(res.data[0].total_price);
-        }
-
-    }
-
-    orderProducts = async () => {
-        let user = this.state.user;
-        console.log(localStorage.getItem('jwtToken'));
-        await Axios.put('/customer/carts/order/' + user.id, { message: 1 }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
-        this.props.loadCartOrderedProducts(this.props.products);
-        this.props.removeAllProducts();
-        this.props.updateTotalPrice(0);
-        this.handleNotification('tr', 'success', 'Successfully orderd products');
-    }
 
     getCartProducts = async () => {
         let next = this.props.next;
         let user = this.state.user;
 
-        let res = await Axios.get('/customer/carts/' + user.id + '?skip=' + next, { headers: { Authorization: localStorage.getItem('jwtToken') } });
+        let res = await Axios.get('/customer/carts/completed/' + user.id + '?skip=' + next, { headers: { Authorization: localStorage.getItem('jwtToken') } });
 
         next += 5;
 
@@ -132,69 +92,6 @@ class UserCartTable extends Component {
 
     };
 
-    onAppyCoupon = async () => {
-        let product = this.state.product;
-
-        let res;
-        let found = false;
-
-        let coupon_code = this.state.coupon_code;
-        try {
-            res = await Axios.get('/customer/cupons/' + product.store_products_id, { headers: { Authorization: localStorage.getItem('jwtToken') } });
-        } catch (error) {
-            this.handleNotification('tr', 'error', "Unable to apply coupon, you must be loged in for this operation");
-        }
-
-
-
-
-
-        for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].coupon_code === coupon_code) {
-                product.price = res.data[i].new_price;
-                found = true;
-            }
-        }
-
-
-
-        if (found) {
-            try {
-                let id = product._id;
-                await Axios.put('/customer/carts/' + id, { "price": product.price, "user_id": this.state.user.id, "store_products_id": product.store_products_id }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
-                this.getTotalPrice();
-                this.props.updateCartProduct(id, product);
-                delete product._id;
-                this.setState({
-                    product
-                });
-            } catch (error) {
-                console.log(error);
-                this.handleNotification('tr', 'error', "Coupon failed");
-
-            }
-
-            this.handleNotification('tr', 'success', 'Applied coupon');
-        } else {
-            this.handleNotification('tr', 'error', "Invalid coupon");
-        }
-
-
-    }
-
-    handleChangeCoupon = (event) => {
-        this.setState({
-            coupon_code: event.target.value
-        });
-    }
-
-    handleChangeQuantity = (event) => {
-        this.setState({
-            quantity: event.target.value
-        });
-    }
-
-
     componentDidMount = () => {
         let decoded;
         let token = localStorage.getItem('jwtToken');
@@ -208,16 +105,10 @@ class UserCartTable extends Component {
             if (this.props.products.length === 0) {
                 this.getCartProducts();
             }
-            this.getTotalPrice();
         })
 
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.products.length !== this.props.products.length) {
-            this.getTotalPrice();
-        }
-    }
 
 
 
@@ -244,10 +135,6 @@ class UserCartTable extends Component {
             dataField: '_id',
             text: 'Edit',
             formatter: this.viewFormatter
-        }, {
-            dataField: '_id',
-            text: 'Edit',
-            formatter: this.removeFormatter
         }];
 
         return (
@@ -305,20 +192,6 @@ class UserCartTable extends Component {
                                     {this.state.product.product_info.country_of_origin}
                                 </Col>
                             </Row>
-                            <Row>
-                                <br />
-                                <ControlLabel>Coupon:</ControlLabel>
-                            </Row>
-                            <Row>
-                                <Col xs={4}>
-                                    <input className="form-control" type="text" onChange={this.handleChangeCoupon} placeholder="Enter coupon" name="coupon_code" />
-                                </Col>
-                                <Col xs={4}>
-                                    <Button bsStyle="info" fill onClick={this.onAppyCoupon}>
-                                        Apply coupon
-                                    </Button>
-                                </Col>
-                            </Row>
                             <div className="clearfix" />
                         </Grid>
 
@@ -327,8 +200,7 @@ class UserCartTable extends Component {
                         <Grid fluid>
                             <Row>
                                 <Col>
-                                    <Button bsStyle="danger" onClick={() => { this.deleteCartProduct(this.state.product._id) }} fill>Remove from cart</Button>
-
+                                    <Button bsStyle="info" onClick={() => { this.onCloseModal() }} >Close modal</Button>
                                 </Col>
                             </Row>
                         </Grid>
@@ -339,11 +211,11 @@ class UserCartTable extends Component {
                     <Row>
                         <Col md={12}>
                             <Card
-                                title="Products in cart"
+                                title="Order history"
                                 ctAllIcons
                                 category={
                                     <span>
-                                        Table of product in the cart
+                                        Table of ordered products
                                     </span>
                                 }
                                 content={
@@ -369,11 +241,7 @@ class UserCartTable extends Component {
                                                     )
                                                 }
                                             </ToolkitProvider>
-                                            <span>Total price: {parseFloat(this.props.total_price).toFixed(2)}</span>
-                                            <br />
-                                            <br />
                                             <Button bsStyle="primary" onClick={() => { this.getCartProducts() }} pullRight>More</Button>
-                                            <Button bsStyle="info" onClick={() => { this.orderProducts() }} fill>Order products</Button>
                                         </Col>
                                     </Row>
                                 }
@@ -388,22 +256,16 @@ class UserCartTable extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        products: state.userCartReducer.products,
-        next: state.userCartReducer.next,
-        total_price: state.userCartReducer.total_price
+        products: state.userCartHistoryReducer.products,
+        next: state.userCartHistoryReducer.next,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        loadCartProducts: (products) => { dispatch({ type: 'LOAD_CART_PRODUCTS', products: products }) },
-        deleteCartProduct: (id) => { dispatch({ type: 'DELETE_CART_PRODUCT', id: id }) },
-        updateCartProduct: (id, product) => { dispatch({ type: 'UPDATE_CART_PRODUCT', id: id, product: product }) },
-        addNextCartProduct: (next) => { dispatch({ type: 'ADD_NEXT_CART_PRODUCT', next: next }) },
-        updateTotalPrice: (price) => { dispatch({ type: 'UPDATE_CART_PRICE', price: price }) },
-        removeAllProducts: () => { dispatch({ type: 'REMOVE_ALL_CART_PRODUCT' }) },
-        loadCartOrderedProducts: (products) => { dispatch({ type: 'LOAD_CART_ORDERED_PRODUCTS', products: products }) },
+        loadCartProducts: (products) => { dispatch({ type: 'LOAD_CART_ORDERED_PRODUCTS', products: products }) },
+        addNextCartProduct: (next) => { dispatch({ type: 'ADD_NEXT_CART_ORDERED_PRODUCT', next: next }) },
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserCartTable)
+export default connect(mapStateToProps, mapDispatchToProps)(OrderHistoryTable)

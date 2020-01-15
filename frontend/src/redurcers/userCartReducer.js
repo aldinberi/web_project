@@ -38,8 +38,6 @@ const userCartReducer = (state = initState, action) => {
     }
 
     if (action.type === 'UPDATE_CART_PRICE') {
-        console.log("Bidnem tu");
-
         return {
             ...state,
             total_price: action.price

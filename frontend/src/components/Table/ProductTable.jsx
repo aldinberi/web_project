@@ -86,7 +86,6 @@ class ProductTable extends Component {
     }
 
     componentDidMount = () => {
-        console.log(this.props.products)
         if (this.props.products.length === 0) {
             this.getProducts();
         }
@@ -104,7 +103,6 @@ class ProductTable extends Component {
             </Button>;
 
 
-        console.log(product);
         this.setState({
             product: product[0],
             open: true,
@@ -136,7 +134,7 @@ class ProductTable extends Component {
             product.date_added = new Date();
             product.quantity = parseInt(product.quantity);
             product.barcode = parseInt(product.barcode);
-            console.log(product);
+
             let res = await Axios.post('/admin/products', { ...product }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
 
             this.props.addProduct(res.data);
@@ -194,8 +192,6 @@ class ProductTable extends Component {
 
 
     render() {
-        console.log("prop")
-        console.log(this.props.products);
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'name',

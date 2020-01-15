@@ -14,11 +14,13 @@ module.exports = (router, db, mongojs, jwt, config, express) => {
 						next();
 					} else {
 						res.status(401).send({ message: "Unauthorized access: improper privileges" });
+
 					}
 				}
 			});
 		} else {
 			res.status(401).send({ message: "Unauthorized access." });
+
 		}
 	});
 

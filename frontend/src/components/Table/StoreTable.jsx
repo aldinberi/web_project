@@ -108,8 +108,6 @@ class StoreTable extends Component {
 
         this.props.addNextStore(next)
 
-        console.log("Duzima");
-        console.log(res.data.length);
         if (res.data.length !== 0 && res.data.length !== null) {
             this.props.loadStores(res.data);
         }
@@ -174,7 +172,6 @@ class StoreTable extends Component {
             let store = this.state.store;
             store.longitude = parseFloat(store.longitude);
             store.latitude = parseFloat(store.latitude);
-            console.log(store);
             let res = await Axios.post('/admin/stores', { ...store }, { headers: { Authorization: localStorage.getItem('jwtToken') } });
 
             this.props.addStore(res.data);
@@ -252,7 +249,6 @@ class StoreTable extends Component {
 
 
     render() {
-        console.log(this.props.stores);
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'name',

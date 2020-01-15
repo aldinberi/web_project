@@ -64,8 +64,6 @@ class StoreTableUser extends Component {
 
         this.props.addNextStore(next)
 
-        console.log("Duzima");
-        console.log(res.data.length);
         if (res.data.length !== 0 && res.data.length !== null) {
             this.props.loadStores(res.data);
         }
@@ -83,7 +81,6 @@ class StoreTableUser extends Component {
 
 
     render() {
-        console.log(this.props.stores);
         const { SearchBar } = Search;
         const columns = [{
             dataField: 'name',

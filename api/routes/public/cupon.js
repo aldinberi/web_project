@@ -37,8 +37,8 @@ module.exports = (router, db, mongojs) => {
 		db.cupons.aggregate(
 			[
 				{ $sort: { new_price: 1 } },
-				{ $limit: limit },
 				{ $skip: skip },
+				{ $limit: limit },
 				{ $lookup: { from: "store_products", localField: "store_product_id", foreignField: "_id", as: "store_product" } },
 				{ $unwind: "$store_product" },
 				{ $lookup: { from: "stores", localField: "store_product.store_id", foreignField: "_id", as: "store" } },
