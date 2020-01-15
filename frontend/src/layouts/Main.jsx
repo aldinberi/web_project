@@ -87,6 +87,8 @@ class MainLayout extends Component {
       } else {
         return <Redirect exact from="/" to="/public/product" />;
       }
+    } else {
+      return <Redirect exact from="/" to="/public/product" />;
     }
   }
 
