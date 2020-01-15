@@ -73,8 +73,16 @@ class MainLayout extends Component {
   };
 
   redirectByUser = () => {
-    if (this.state.user != null) {
-      if (this.state.user.type === "admin") {
+    let decoded;
+    let token = localStorage.getItem('jwtToken');
+    try {
+      decoded = jwt_decode(token);
+    } catch (e) {
+
+    }
+
+    if (decoded != null) {
+      if (decoded.type === "admin") {
         return <Redirect exact from="/" to="/admin/dashboard" />;
       } else {
         return <Redirect exact from="/" to="/public/products" />;

@@ -1,6 +1,5 @@
 
 import Dashboard from "views/Dashboard.jsx";
-import UserProfile from "views/UserProfile.jsx";
 import Products from "views/Products";
 import Coupons from "views/Coupons";
 import Stores from "views/Stores";
@@ -40,13 +39,6 @@ const dashboardRoutes = [
     name: "Stores",
     icon: "pe-7s-shopbag",
     component: Stores,
-    layout: "/admin"
-  },
-  {
-    path: "/user",
-    name: "User Profile",
-    icon: "pe-7s-user",
-    component: UserProfile,
     layout: "/admin"
   },
   {
