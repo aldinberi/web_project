@@ -11,6 +11,8 @@ import { style } from "variables/Variables.jsx";
 import { Modal } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 
+import image from "assets/img/spinner.gif";
+
 class OrderHistoryTable extends Component {
 
     state = {
@@ -23,6 +25,7 @@ class OrderHistoryTable extends Component {
         quantity: 1,
         _notificationSystem: null,
         user: {},
+        data_indicator: <img alt="Loading...." style={{ maxHeight: 30 }} src={image} />
     }
 
     handleNotification(position, level, message) {
@@ -93,6 +96,11 @@ class OrderHistoryTable extends Component {
     };
 
     componentDidMount = () => {
+        setTimeout(() => {
+            this.setState(() => ({
+                data_indicator: "No ordered products available"
+            }));
+        }, 3000);
         let decoded;
         let token = localStorage.getItem('jwtToken');
         try {
@@ -236,6 +244,7 @@ class OrderHistoryTable extends Component {
                                                                 striped
                                                                 hover
                                                                 wrapperClasses="table-responsive"
+                                                                noDataIndication={this.state.data_indicator}
                                                             />
                                                         </div>
                                                     )

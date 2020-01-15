@@ -11,6 +11,8 @@ import Modal from 'react-responsive-modal';
 import NotificationSystem from 'react-notification-system';
 import { style } from "variables/Variables.jsx";
 
+import image from "assets/img/spinner.gif";
+
 class ProductTable extends Component {
 
     state = {
@@ -19,7 +21,8 @@ class ProductTable extends Component {
             id: 1
         },
         modalButton: "",
-        _notificationSystem: null
+        _notificationSystem: null,
+        data_indicator: <img alt="Loading...." style={{ maxHeight: 30 }} src={image} />
     }
 
     handleNotification(position, level, message) {
@@ -86,6 +89,11 @@ class ProductTable extends Component {
     }
 
     componentDidMount = () => {
+        setTimeout(() => {
+            this.setState(() => ({
+                data_indicator: "No products available"
+            }));
+        }, 3000);
         if (this.props.products.length === 0) {
             this.getProducts();
         }
@@ -242,7 +250,7 @@ class ProductTable extends Component {
                 <NotificationSystem ref="notificationSystem" style={style} />
                 <Modal open={this.state.open} onClose={this.onCloseModal} center>
                     <Grid fluid>
-                        <h4>Edit product</h4>
+                        <h4>Product</h4>
                         <hr />
                         <form>
                             <FormInputs
@@ -408,6 +416,7 @@ class ProductTable extends Component {
                                                                 striped
                                                                 hover
                                                                 wrapperClasses="table-responsive"
+                                                                noDataIndication={this.state.data_indicator}
                                                             />
                                                         </div>
                                                     )

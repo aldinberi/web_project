@@ -11,6 +11,8 @@ import { style } from "variables/Variables.jsx";
 import { Modal } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 
+import image from "assets/img/spinner.gif";
+
 class StoreProductsTableUser extends Component {
 
     state = {
@@ -22,7 +24,8 @@ class StoreProductsTableUser extends Component {
         coupon_code: "",
         quantity: 1,
         _notificationSystem: null,
-        user: {}
+        user: {},
+        data_indicator: <img alt="Loading...." style={{ maxHeight: 30 }} src={image} />
     }
 
     handleNotification(position, level, message) {
@@ -116,9 +119,6 @@ class StoreProductsTableUser extends Component {
             return product._id === id
         });
 
-
-
-
         this.setState({
             product: product[0],
             open: true,
@@ -136,8 +136,6 @@ class StoreProductsTableUser extends Component {
         } catch (error) {
             this.handleNotification('tr', 'error', "Unable to add product to cart, you must be loged in for this operation");
         }
-
-
 
         for (let i = 0; i < res.data.length; i++) {
             if (res.data[i].coupon_code === coupon_code) {
@@ -172,6 +170,11 @@ class StoreProductsTableUser extends Component {
 
 
     componentDidMount = () => {
+        setTimeout(() => {
+            this.setState(() => ({
+                data_indicator: "No products available"
+            }));
+        }, 3000);
         let decoded;
         let token = localStorage.getItem('jwtToken');
         try {
@@ -329,6 +332,7 @@ class StoreProductsTableUser extends Component {
                                                                 striped
                                                                 hover
                                                                 wrapperClasses="table-responsive"
+                                                                noDataIndication={this.state.data_indicator}
                                                             />
                                                         </div>
                                                     )

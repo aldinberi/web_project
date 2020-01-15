@@ -11,6 +11,8 @@ import { style } from "variables/Variables.jsx";
 import { Modal } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 
+import image from "assets/img/spinner.gif";
+
 class UserCartTable extends Component {
 
     state = {
@@ -23,6 +25,7 @@ class UserCartTable extends Component {
         quantity: 1,
         _notificationSystem: null,
         user: {},
+        data_indicator: <img alt="Loading..." style={{ maxHeight: 30 }} src={image} />
     }
 
     handleNotification(position, level, message) {
@@ -132,6 +135,7 @@ class UserCartTable extends Component {
 
     };
 
+
     onAppyCoupon = async () => {
         let product = this.state.product;
 
@@ -196,6 +200,11 @@ class UserCartTable extends Component {
 
 
     componentDidMount = () => {
+        setTimeout(() => {
+            this.setState(() => ({
+                data_indicator: "No products in cart"
+            }));
+        }, 3000);
         let decoded;
         let token = localStorage.getItem('jwtToken');
         try {
@@ -251,7 +260,7 @@ class UserCartTable extends Component {
         }];
 
         return (
-            <div>
+            < div >
                 <Modal show={this.state.open} onHide={this.onCloseModal}>
                     <Modal.Header closeButton>
                         <Modal.Title>{this.state.product.product_info.name}</Modal.Title>
@@ -364,6 +373,7 @@ class UserCartTable extends Component {
                                                                 striped
                                                                 hover
                                                                 wrapperClasses="table-responsive"
+                                                                noDataIndication={this.state.data_indicator}
                                                             />
                                                         </div>
                                                     )
@@ -381,7 +391,7 @@ class UserCartTable extends Component {
                         </Col>
                     </Row>
                 </Grid>
-            </div>
+            </div >
         )
     }
 }

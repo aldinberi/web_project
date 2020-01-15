@@ -12,6 +12,8 @@ import NotificationSystem from 'react-notification-system';
 import { style } from "variables/Variables.jsx";
 import Checkbox from 'components/CustomCheckbox/CustomCheckbox';
 
+import image from "assets/img/spinner.gif";
+
 class StoreTable extends Component {
 
     state = {
@@ -26,7 +28,8 @@ class StoreTable extends Component {
             }
         },
         modalButton: "",
-        _notificationSystem: null
+        _notificationSystem: null,
+        data_indicator: <img alt="Loading...." style={{ maxHeight: 30 }} src={image} />
     }
 
     handleNotification(position, level, message) {
@@ -116,6 +119,11 @@ class StoreTable extends Component {
 
 
     componentDidMount = () => {
+        setTimeout(() => {
+            this.setState(() => ({
+                data_indicator: "No stores available"
+            }));
+        }, 3000);
         if (this.props.stores.length === 0) {
             this.getStores();
         }
@@ -422,6 +430,7 @@ class StoreTable extends Component {
                                                                 striped
                                                                 hover
                                                                 wrapperClasses="table-responsive"
+                                                                noDataIndication={this.state.data_indicator}
                                                             />
                                                         </div>
                                                     )

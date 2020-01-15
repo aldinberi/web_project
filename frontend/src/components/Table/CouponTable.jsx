@@ -11,12 +11,15 @@ import Modal from 'react-responsive-modal';
 import NotificationSystem from 'react-notification-system';
 import { style } from "variables/Variables.jsx";
 
+import image from "assets/img/spinner.gif";
+
 class CouponTable extends Component {
 
     state = {
         open: false,
         coupon: {},
-        _notificationSystem: null
+        _notificationSystem: null,
+        data_indicator: <img alt="Loading...." style={{ maxHeight: 30 }} src={image} />
     }
 
     handleNotification(position, level, message) {
@@ -90,7 +93,11 @@ class CouponTable extends Component {
     }
 
     componentDidMount = () => {
-
+        setTimeout(() => {
+            this.setState(() => ({
+                data_indicator: "No coupons available"
+            }));
+        }, 3000);
         if (this.props.coupons.length === 0) {
             this.getCoupons();
         }
@@ -261,6 +268,7 @@ class CouponTable extends Component {
                                                                 striped
                                                                 hover
                                                                 wrapperClasses="table-responsive"
+                                                                noDataIndication={this.state.data_indicator}
                                                             />
                                                         </div>
                                                     )

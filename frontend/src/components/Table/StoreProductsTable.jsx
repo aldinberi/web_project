@@ -11,6 +11,8 @@ import Modal from 'react-responsive-modal';
 import NotificationSystem from 'react-notification-system';
 import { style } from "variables/Variables.jsx";
 
+import image from "assets/img/spinner.gif";
+
 
 class StoreProductsTable extends Component {
 
@@ -26,6 +28,7 @@ class StoreProductsTable extends Component {
         select_product: [],
         modalButton: "",
         _notificationSystem: null,
+        data_indicator: <img alt="Loading...." style={{ maxHeight: 30 }} src={image} />
     }
 
     handleNotification(position, level, message) {
@@ -131,6 +134,11 @@ class StoreProductsTable extends Component {
 
 
     componentDidMount = () => {
+        setTimeout(() => {
+            this.setState(() => ({
+                data_indicator: "No products available"
+            }));
+        }, 3000);
         if (this.props.products.length === 0) {
             this.getStoreProducts();
         }
@@ -438,6 +446,7 @@ class StoreProductsTable extends Component {
                                                                 striped
                                                                 hover
                                                                 wrapperClasses="table-responsive"
+                                                                noDataIndication={this.state.data_indicator}
                                                             />
                                                         </div>
                                                     )
