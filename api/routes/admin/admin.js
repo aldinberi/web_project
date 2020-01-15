@@ -16,12 +16,12 @@ module.exports = (router, db, mongojs, jwt, config, express, swaggerJSDoc, swagg
 						if (userType === "admin") {
 							next();
 						} else {
-							res.status(401).send({ message: "Unauthorized access: improper privileges" });
+							res.status(401).json({ message: "Unauthorized access: improper privileges" });
 						}
 					}
 				});
 			} else {
-				res.status(401).send({ message: "Unauthorized access." });
+				res.status(401).json({ message: "Unauthorized access." });
 
 			}
 		}

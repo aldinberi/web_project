@@ -21,42 +21,42 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/products",
+    path: "/product",
     name: "Products",
     icon: "pe-7s-drawer",
     component: Products,
     layout: "/admin"
   },
   {
-    path: "/coupons",
+    path: "/coupon",
     name: "Coupons",
     icon: "pe-7s-ticket",
     component: Coupons,
     layout: "/admin"
   },
   {
-    path: "/stores",
+    path: "/store",
     name: "Stores",
     icon: "pe-7s-shopbag",
     component: Stores,
     layout: "/admin"
   },
   {
-    path: "/products",
+    path: "/product",
     name: "Products",
     icon: "pe-7s-drawer",
     component: ProductsUser,
     layout: "/public"
   },
   {
-    path: "/coupons",
+    path: "/coupon",
     name: "Coupons",
     icon: "pe-7s-ticket",
     component: CouponsUser,
     layout: "/public"
   },
   {
-    path: "/stores",
+    path: "/store",
     name: "Stores",
     icon: "pe-7s-shopbag",
     component: StoresUser,
