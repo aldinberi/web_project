@@ -21,7 +21,7 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/product",
+    path: "/items",
     name: "Products",
     icon: "pe-7s-drawer",
     component: Products,

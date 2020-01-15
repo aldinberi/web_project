@@ -85,7 +85,7 @@ class MainLayout extends Component {
       if (decoded.type === "admin") {
         return <Redirect exact from="/" to="/admin/dashboard" />;
       } else {
-        return <Redirect exact from="/" to="/public/products" />;
+        return <Redirect exact from="/" to="/public/product" />;
       }
     }
   }
