@@ -14,7 +14,7 @@ class NavbarLinks extends Component {
 
   logout = () => {
     localStorage.removeItem('jwtToken');
-    window.location = '/public/products';
+    window.location = '/public/product';
   }
 
   render() {
