@@ -83,7 +83,7 @@ class MainLayout extends Component {
 
     if (decoded != null) {
       if (decoded.type === "admin") {
-        return <Redirect exact from="/" to="/admin/dashboard" />;
+        return <Redirect exact from="/" to="/administrator/dashboard" />;
       } else {
         return <Redirect exact from="/" to="/public/product" />;
       }
@@ -103,11 +103,11 @@ class MainLayout extends Component {
     if (decoded != null) {
       if (decoded.type === "admin") {
         filteredRoutes = routes.filter(route => {
-          return route.layout === "/admin"
+          return route.layout === "/administrator"
         });
       } else if (decoded.type === "customer") {
         filteredRoutes = routes.filter(route => {
-          return route.layout === "/public" || route.layout === "/customer"
+          return route.layout === "/public" || route.layout === "/user"
         });
       }
 

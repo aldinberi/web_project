@@ -18,28 +18,28 @@ const dashboardRoutes = [
     name: "Dashboard",
     icon: "pe-7s-graph",
     component: Dashboard,
-    layout: "/admin"
+    layout: "/administrator"
   },
   {
     path: "/items",
     name: "Products",
     icon: "pe-7s-drawer",
     component: Products,
-    layout: "/admin"
+    layout: "/administrator"
   },
   {
     path: "/coupon",
     name: "Coupons",
     icon: "pe-7s-ticket",
     component: Coupons,
-    layout: "/admin"
+    layout: "/administrator"
   },
   {
     path: "/store",
     name: "Stores",
     icon: "pe-7s-shopbag",
     component: Stores,
-    layout: "/admin"
+    layout: "/administrator"
   },
   {
     path: "/product",
@@ -67,7 +67,7 @@ const dashboardRoutes = [
     name: "Cart",
     icon: "pe-7s-cart",
     component: UserCart,
-    layout: "/customer"
+    layout: "/user"
   },
 ];
 
